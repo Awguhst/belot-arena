@@ -1,0 +1,46 @@
+{
+  "name": "belot-club",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build && node scripts/portable.mjs && node scripts/build-server.mjs",
+    "start": "node .build/server.cjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:portable": "node scripts/verify-portable.mjs",
+    "simulate": "tsx packages/bots/tests/simulate.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/roboto": "5.3.0",
+    "@fontsource/pt-serif": "5.3.0",
+    "@tailwindcss/vite": "4.3.5",
+    "lucide-react": "1.79.0",
+    "motion": "14.14.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "tailwindcss": "4.3.5",
+    "ws": "^8.23.0",
+    "zustand": "5.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/ws": "^8.18.2",
+    "@vitejs/plugin-react": "6.3.0",
+    "esbuild": "0.28.2",
+    "prettier": "3.10.1",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vite": "8.3.8",
+    "vitest": "5.1.1"
+  },
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=24.14.0"
+  }
+}

@@ -1,0 +1,92 @@
+.table-animation-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 16;
+  pointer-events: none;
+  overflow: hidden;
+  isolation: isolate;
+  contain: layout paint;
+}
+.flying-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  transform-origin: 50% 50%;
+  font-family: var(--serif, Georgia, serif);
+  pointer-events: none;
+}
+.flight-flipper,
+.flight-face,
+.flight-reverse,
+.flight-outline {
+  position: absolute;
+  inset: 0;
+  border-radius: 7%;
+  pointer-events: none;
+}
+.flight-flipper {
+  transform-style: preserve-3d;
+}
+.flight-face,
+.flight-reverse {
+  backface-visibility: hidden;
+  box-shadow: 0 4px 10px #05150f73;
+}
+.flight-face > * {
+  width: 100%;
+  height: 100%;
+}
+.flying-card .flight-reverse {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 6.4% / 4.4%;
+  color: var(--brass, #d4b982);
+}
+.flight-flipper > .flight-reverse {
+  transform: rotateY(180deg);
+}
+.flight-reverse:before {
+  content: '';
+  position: absolute;
+  inset: 5%;
+  border: 1px solid #bfae7c94;
+  border-radius: 5%;
+}
+.flight-outline {
+  opacity: 0;
+  box-shadow:
+    0 0 0 3px #f1cc72,
+    0 0 21px 5px #f0c66366;
+}
+.flight-points {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  background: #102c25f0;
+  color: #f7d990;
+  border: 1px solid #cfad6f;
+  border-radius: 20px;
+  padding: 4px 9px;
+  font: 700 16px/1.2 var(--sans, system-ui);
+  white-space: nowrap;
+  box-shadow: 0 2px 8px #061d1299;
+}
+.flight-points span {
+  font-size: 0.69em;
+  letter-spacing: 0.02em;
+}
+.flight-measure [data-anim-card],
+.flight-measure [data-anim-back] {
+  transition: none !important;
+}
+.flight-points.them {
+  background-color: #392523;
+  color: #f2bcb1;
+  border-color: #c1897b;
+}

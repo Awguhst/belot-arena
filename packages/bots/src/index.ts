@@ -1,0 +1,5 @@
+export { chooseHeuristic, evaluateDecision, sameDecision } from './heuristic'
+export { chooseDecision } from './simulation'
+export { explainDecision } from './reasons'
+export type { DecisionReason } from './reasons'
+export type { BotContext, BotDecision, BotAgent, DecisionGrade, Difficulty } from './types'

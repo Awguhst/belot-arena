@@ -1,0 +1,30 @@
+.online-table .arena-mast h1,
+.online-table .station-name strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.online-table .station-name strong {
+  display: block;
+  max-width: min(23vw, 175px);
+}
+.online-table .pos-south .station-name strong {
+  max-width: min(33vw, 190px);
+}
+.online-table .portrait-disc > svg {
+  width: 57%;
+  height: 57%;
+  color: var(--cream);
+}
+.room-turn-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  color: var(--gold);
+  font: 600 0.76rem var(--sans);
+  font-variant-numeric: tabular-nums;
+}
+.room-turn-status.offline {
+  color: #f1af99;
+}

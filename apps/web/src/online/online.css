@@ -1,0 +1,1293 @@
+.net-page {
+  --net-border: #3a463c;
+  --net-gold: #e2c38a;
+  --net-muted: #a8b6aa;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: #eceee6;
+  background: radial-gradient(ellipse at 80% 0%, #23362b70, transparent 55%), #111713;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.net-mast {
+  border-bottom: 1px solid #354338;
+  background: #19231c;
+}
+.net-mast-inner,
+.net-main {
+  max-width: 1230px;
+  margin: auto;
+}
+.net-mast-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 66px;
+  padding: 0 clamp(16px, 4vw, 56px);
+}
+.net-mast-actions,
+.net-brand,
+.net-identity,
+.net-offline,
+.net-secondary,
+.net-sort,
+.net-table-value,
+.net-room-title,
+.net-avatar,
+.net-filter-button,
+.net-lock,
+.net-dialog-room,
+.net-check {
+  display: inline-flex;
+  align-items: center;
+}
+.net-brand {
+  gap: 10px;
+  padding: 0;
+  font: 1.65rem var(--serif);
+  color: #f1e6ce;
+  white-space: nowrap;
+  letter-spacing: -0.06em;
+}
+.net-brand img {
+  width: 35px;
+  height: 35px;
+}
+.net-brand em {
+  color: #dfc087;
+}
+.net-mast-actions {
+  gap: 18px;
+}
+.net-offline,
+.net-identity {
+  gap: 8px;
+  color: #c5d0c3;
+  font-size: 0.85rem;
+}
+.net-offline:hover,
+.net-identity:hover {
+  color: var(--net-gold);
+}
+.net-identity {
+  padding: 0 0 0 17px;
+  border-left: 1px solid var(--net-border);
+}
+.net-identity strong,
+.net-occupant strong,
+.net-room-title strong,
+.net-owner,
+.net-description {
+  overflow-wrap: anywhere;
+}
+.net-identity strong {
+  font-weight: 550;
+}
+.net-avatar {
+  position: relative;
+  justify-content: center;
+  flex: none;
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  border: 1px solid #718b7188;
+  background: #354b3a;
+  color: #d3e7ce;
+  font: 1rem var(--serif);
+}
+.net-avatar.net-tone-1 {
+  background: #514237;
+  color: #f1d2af;
+  border-color: #7b624d;
+}
+.net-avatar.net-tone-2 {
+  background: #394b50;
+  color: #cee5e6;
+  border-color: #526e73;
+}
+.net-avatar.net-tone-3 {
+  background: #4d4047;
+  color: #eed3dd;
+  border-color: #785764;
+}
+.net-avatar > .net-avatar-crown {
+  position: absolute;
+  top: -5px;
+  right: -3px;
+  color: #efd391;
+  fill: #6b5232;
+}
+.net-main {
+  padding: clamp(20px, 3.6vw, 46px) clamp(16px, 4vw, 56px) 60px;
+}
+.net-banner {
+  overflow: hidden;
+  border: 1px solid #526548;
+  border-radius: 13px;
+  background-color: #153d2c;
+  background-image:
+    linear-gradient(95deg, #183d2efc 8%, #183d2eea 35%, #19372964 67%, #16271a12),
+    url('/art/club-table.webp');
+  background-size:
+    100% 100%,
+    max(68%, 620px) auto;
+  background-position:
+    center,
+    right 42%;
+  background-repeat: no-repeat;
+  box-shadow: 0 12px 30px #08130d36;
+}
+.net-page-heading {
+  padding: clamp(22px, 3vw, 37px);
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  flex-direction: column;
+}
+.net-page h1 {
+  font: 400 clamp(2.25rem, 4.45vw, 4.1rem)/1.02 var(--serif);
+  letter-spacing: -0.052em;
+  color: #fff5dc;
+  margin: 0;
+}
+.net-host {
+  min-height: 38px;
+  padding: 8px 17px;
+  border-color: #eed09a;
+}
+.net-presence {
+  display: flex;
+  align-items: center;
+  gap: clamp(15px, 4%, 42px);
+  border-top: 1px solid #afad7670;
+  background: #0a1d15d9;
+  margin: 0;
+  padding: 13px clamp(18px, 3vw, 37px);
+}
+.net-presence > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.net-presence svg {
+  color: #bcac7c;
+}
+.net-presence dd {
+  margin: 0;
+  color: #ebd5a4;
+  font-size: 0.98rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+.net-presence dt {
+  font-size: 0.8rem;
+  color: #ced8c9;
+}
+.net-browser {
+  margin-top: 23px;
+  border: 1px solid var(--net-border);
+  border-radius: 11px;
+  background: #19201b;
+  overflow: hidden;
+}
+.net-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  border-bottom: 1px solid var(--net-border);
+}
+.net-search,
+.net-sort,
+.net-secondary,
+.net-shuffle,
+.net-mini,
+.net-join,
+.net-icon-action {
+  background: #242f27;
+  color: #d8e1d4;
+  border: 1px solid #465547;
+  border-radius: 5px;
+}
+.net-search {
+  height: 39px;
+  flex: 1;
+  max-width: 460px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-inline: 11px;
+  background: #131b16;
+  color: #a1b39f;
+}
+.net-search input,
+.net-chat form input {
+  background: none;
+  border: none;
+  min-width: 0;
+  width: 100%;
+  color: #ecf0e8;
+  font: inherit;
+  outline-offset: 4px;
+}
+.net-search:focus-within {
+  border-color: var(--net-gold);
+}
+.net-search input::placeholder,
+.net-chat input::placeholder {
+  color: #a2afa1;
+}
+.net-search input:focus {
+  outline: 0;
+}
+.net-secondary,
+.net-shuffle,
+.net-sort {
+  min-height: 37px;
+  padding: 7px 11px;
+  gap: 7px;
+  font-size: 0.82rem;
+}
+.net-secondary:hover:not(:disabled),
+.net-mini:hover:not(:disabled),
+.net-shuffle:hover:not(:disabled),
+.net-seat-action:hover,
+.net-icon-action:hover {
+  background: #324134;
+  border-color: #8b997e;
+  color: #fff2cf;
+}
+.net-filter-button.net-selected {
+  border-color: #b49a6b;
+  color: #ebcb91;
+}
+.net-filter-button b {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #5f573a;
+  width: 17px;
+  height: 17px;
+}
+.net-sort {
+  margin-left: auto;
+  padding: 0 8px;
+  flex: none;
+}
+.net-sort select {
+  border: 0;
+  background: #242f27;
+  color: inherit;
+  max-width: 165px;
+  min-height: 35px;
+  font: inherit;
+}
+.net-filters {
+  border-bottom: 1px solid var(--net-border);
+  background: #172019;
+  padding: 14px 16px;
+  display: grid;
+  gap: 13px;
+}
+.net-filter-checks,
+.net-filter-selects,
+.net-manage-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px 20px;
+  flex-wrap: wrap;
+}
+.net-filter-checks label,
+.net-filter-selects label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+  color: #d3ddce;
+}
+.net-filter-checks input,
+.net-check input {
+  accent-color: #daaf69;
+}
+.net-filter-selects select,
+.net-field input,
+.net-field select {
+  border: 1px solid #4d5c4e;
+  background: #1c271f;
+  color: #efeee2;
+  border-radius: 5px;
+  padding: 7px 9px;
+  font: inherit;
+}
+.net-room-list {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+.net-room-list thead {
+  background: #202b22;
+}
+.net-room-list th {
+  color: #aebdab;
+  font-size: 0.65rem;
+  letter-spacing: 0.085em;
+  text-transform: uppercase;
+  text-align: left;
+  font-weight: 600;
+  padding: 10px;
+}
+.net-room-list td {
+  padding: 12px 10px;
+  border-top: 1px solid #344036;
+  vertical-align: middle;
+}
+.net-room-list td:first-child,
+.net-room-list th:first-child {
+  padding-left: 16px;
+}
+.net-room-list td:last-child {
+  padding-right: 16px;
+  text-align: right;
+}
+.net-room-list tbody tr {
+  transition: background-color 0.14s;
+}
+.net-room-list tbody tr:hover,
+.net-room-list tbody tr:focus-within {
+  background: #222e24;
+}
+.net-room-title {
+  gap: 11px;
+  max-width: clamp(160px, 31vw, 430px);
+}
+.net-room-mark {
+  height: 35px;
+  width: 35px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  flex: none;
+  background: linear-gradient(135deg, #374c39, #27392c);
+  border: 1px solid #54654a;
+  color: #d3b97b;
+}
+.net-room-title strong,
+.net-room-title small {
+  display: block;
+}
+.net-room-title strong {
+  color: #f1efde;
+  font: 0.99rem var(--serif);
+  line-height: 1.25;
+}
+.net-room-title small,
+.net-table-value small {
+  font-size: 0.72rem;
+  color: var(--net-muted);
+}
+.net-room-title small {
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+.net-lock {
+  color: #ccae77;
+  vertical-align: baseline;
+  margin-left: 6px;
+}
+.net-table-value {
+  gap: 4px;
+  color: #e3e8d9;
+  font-size: 0.83rem;
+  white-space: nowrap;
+}
+.net-table-value svg {
+  color: #9eae99;
+  margin-right: 2px;
+}
+.net-table-value span {
+  color: #9eae99;
+}
+.net-table-value small {
+  white-space: normal;
+}
+.net-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  border: 1px solid #4e6c4c;
+  color: #b8d8ae;
+  background: #283d2b;
+  white-space: nowrap;
+  font: 500 0.71rem var(--sans);
+}
+.net-status i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.net-status.net-playing {
+  background: #473d26;
+  color: #e4c78d;
+  border-color: #716142;
+}
+.net-status.net-completed,
+.net-status.net-closed {
+  background: #2e3430;
+  color: #c0c7bd;
+  border-color: #4a554a;
+}
+.net-status.net-ready {
+  color: #c4eab8;
+}
+.net-join {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 10px;
+  min-height: 32px;
+  border-color: #6e7255;
+  background: #353e2e;
+  color: #e4d5aa;
+  font-weight: 600;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.net-join:hover:not(:disabled) {
+  background: #4e573b;
+  border-color: #c8b77d;
+}
+.net-join:disabled {
+  opacity: 0.58;
+}
+.net-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: clamp(34px, 6vw, 74px) 18px;
+  gap: 8px;
+  color: var(--net-muted);
+}
+.net-empty-mark {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #536346;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #344735, #243328);
+  display: grid;
+  place-items: center;
+  color: var(--net-gold);
+  margin-bottom: 6px;
+}
+.net-empty h2,
+.net-chat h2,
+.net-seating h2 {
+  font: 400 clamp(1.1rem, 1.65vw, 1.45rem) var(--serif);
+  color: #eee9d7;
+}
+.net-empty p {
+  font-size: 0.89rem;
+  max-width: 410px;
+}
+.net-error {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #402a22;
+  border: 1px solid #805541;
+  color: #f0c4a5;
+  padding: 9px 12px;
+  border-radius: 5px;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+.net-error svg {
+  flex: none;
+}
+.net-page > .net-main > .net-error,
+.net-browser > .net-error {
+  margin: 12px;
+}
+.net-form {
+  display: grid;
+  gap: 13px;
+}
+.net-form-note {
+  color: #b7c4b3;
+  font-size: 0.87rem;
+}
+.net-dialog-room {
+  gap: 8px;
+  overflow-wrap: anywhere;
+  color: #e5d29c;
+}
+.net-field {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  color: #ccd6c8;
+  font-size: 0.85rem;
+}
+.net-field span {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.net-field input,
+.net-field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 37px;
+}
+.net-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.net-check {
+  gap: 7px;
+  font-size: 0.85rem;
+  color: #d0dbcc;
+  line-height: 1.38;
+}
+.net-check input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex: none;
+}
+.net-preview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  padding: 4px 0;
+}
+.net-preview > div {
+  border: 1px solid #485a48;
+  border-radius: 6px;
+  background: #243527;
+  padding: 9px 4px;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.net-preview svg {
+  color: #c7b685;
+}
+.net-preview strong {
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+}
+.net-preview small {
+  font-size: 0.63rem;
+  color: #acb9a7;
+}
+.net-preview .net-open {
+  border-style: dashed;
+  background: transparent;
+}
+.net-options {
+  border-top: 1px solid #3f4f3f;
+  border-bottom: 1px solid #3f4f3f;
+  padding: 10px 0;
+}
+.net-options summary {
+  cursor: pointer;
+  color: #d8d7bc;
+  font-size: 0.86rem;
+}
+.net-options summary svg {
+  vertical-align: -3px;
+  margin-right: 5px;
+}
+.net-options[open] > .net-field,
+.net-options[open] > .net-form-row,
+.net-options[open] > .net-check {
+  margin-top: 11px;
+}
+.net-form .modal-actions {
+  margin-top: 4px;
+}
+.modal:has(.net-room-form) {
+  max-width: min(510px, calc(100vw - 26px));
+  width: 510px;
+}
+.net-room-heading,
+.net-room-controls,
+.net-owner,
+.net-setting-strip,
+.net-setting-strip span,
+.net-ready-bar > div,
+.net-seating-head,
+.net-seat-top,
+.net-occupant,
+.net-seat-state,
+.net-chat-head,
+.net-chat-head > button,
+.net-seat-action,
+.net-shuffle {
+  display: flex;
+  align-items: center;
+}
+.net-room-heading {
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.net-room-heading h1 {
+  margin: 9px 0 7px;
+  overflow-wrap: anywhere;
+}
+.net-room-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.net-room-name svg {
+  flex: none;
+  color: #bfa772;
+  vertical-align: middle;
+}
+.net-owner,
+.net-description {
+  font: 400 0.86rem/1.45 var(--sans);
+  color: #b9c6b6;
+}
+.net-owner {
+  gap: 7px;
+}
+.net-owner svg {
+  color: #c2a66f;
+}
+.net-room-controls {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.net-description {
+  max-width: 770px;
+  margin-top: 14px;
+}
+.net-room-body {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(245px, 0.9fr);
+  gap: 15px;
+  align-items: start;
+}
+.net-seating,
+.net-chat {
+  border: 1px solid var(--net-border);
+  border-radius: 10px;
+  background: #1a231c;
+  overflow: hidden;
+  min-width: 0;
+}
+.net-seating-head,
+.net-chat-head {
+  justify-content: space-between;
+  gap: 8px;
+  padding: 13px 17px;
+  border-bottom: 1px solid var(--net-border);
+  background: #202b22;
+}
+.net-shuffle,
+.net-mini {
+  padding: 5px 8px;
+  gap: 5px;
+  font-size: 0.75rem;
+  min-height: 31px;
+}
+.net-teams {
+  padding: 15px clamp(13px, 3vw, 28px);
+  display: grid;
+  gap: 14px;
+  background:
+    linear-gradient(100deg, #102f228f, #16483150),
+    url('/art/emerald-baize.webp') center/cover;
+}
+.net-team h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #dbc898;
+  text-align: center;
+  font-size: 0.96rem;
+  margin: 0 0 7px;
+}
+.net-team h3 span {
+  height: 1px;
+  background: #c5b57e4f;
+  flex: 1;
+}
+.net-seat-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.net-seat {
+  position: relative;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #6f805b;
+  border-radius: 7px;
+  background: #17291edc;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.net-seat.net-seat-own {
+  border-color: #c4aa74;
+  box-shadow: inset 0 0 0 1px #b59c5d33;
+}
+.net-seat-empty {
+  border-style: dashed;
+  background: #172b1fb8;
+}
+.net-seat-top {
+  justify-content: space-between;
+  gap: 5px;
+  min-height: 23px;
+  color: #a8b99f;
+}
+.net-seat-top small {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.net-icon-action {
+  display: grid;
+  place-items: center;
+  padding: 2px;
+  min-width: 26px;
+  height: 24px;
+  background: #26372b;
+}
+.net-occupant {
+  gap: 8px;
+  min-width: 0;
+}
+.net-occupant > div {
+  min-width: 0;
+}
+.net-occupant strong,
+.net-occupant small {
+  display: block;
+}
+.net-occupant strong {
+  font-size: 0.91rem;
+  color: #f1ecda;
+}
+.net-occupant small {
+  font-size: 0.7rem;
+  color: #b6c5b0;
+  margin-top: 3px;
+}
+.net-occupant .net-avatar,
+.net-vacancy,
+.net-bot-avatar {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+}
+.net-bot-avatar {
+  border: 1px solid #978862;
+  object-fit: cover;
+}
+.net-vacancy {
+  display: grid;
+  place-items: center;
+  border: 1px dashed #778c73;
+  color: #b5c5a8;
+}
+.net-seat-state,
+.net-seat-action {
+  gap: 4px;
+  font-size: 0.72rem;
+  color: #c4cdbd;
+  min-height: 23px;
+}
+.net-seat-state.yes {
+  color: #c4dba8;
+}
+.net-seat-state.away {
+  color: #e0b38c;
+}
+.net-seat-action {
+  padding: 2px 4px;
+  background: #344733;
+  border: 1px solid #66754f;
+  border-radius: 4px;
+  color: #e1d6ab;
+  align-self: flex-start;
+}
+.net-setting-strip {
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 10px 17px;
+  border-bottom: 1px solid var(--net-border);
+  color: #c8d2c2;
+  font-size: 0.76rem;
+}
+.net-setting-strip span {
+  gap: 5px;
+}
+.net-setting-strip svg {
+  width: 14px;
+  height: 14px;
+  color: #b8a779;
+}
+.net-room-rules {
+  padding: 9px 17px;
+  font-size: 0.8rem;
+  color: #c8d2c2;
+  border-bottom: 1px solid var(--net-border);
+}
+.net-room-rules summary {
+  cursor: pointer;
+}
+.net-room-rules dl {
+  margin: 10px 0 2px;
+}
+.net-room-rules dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 3px 0;
+}
+.net-room-rules dd {
+  margin: 0;
+  color: #e3d6ae;
+  text-align: right;
+}
+.net-ready-bar {
+  padding: 16px 17px;
+}
+.net-ready-bar p {
+  font-size: 0.84rem;
+  color: #b6c4b2;
+  margin-bottom: 12px;
+}
+.net-ready-bar > div {
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.net-ready-bar .btn {
+  font-size: 0.82rem;
+  min-height: 36px;
+  padding: 7px 12px;
+}
+.net-manage-actions .btn {
+  font-size: 0.82rem;
+}
+.net-danger {
+  color: #e3ab95;
+}
+.net-confirm {
+  border-top: 1px solid #5a493c;
+  padding-top: 10px;
+}
+.net-confirm p {
+  font-size: 0.84rem;
+  margin-bottom: 10px;
+}
+.net-chat-head {
+  min-height: 53px;
+}
+.net-chat-head > button:first-child {
+  gap: 7px;
+  color: #d8ceac;
+  padding: 0;
+}
+.net-chat h2 {
+  font-size: 1.15rem;
+}
+.net-chat-people {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--net-border);
+}
+.net-chat-log {
+  overflow: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+  margin: 0;
+  padding: 13px 15px;
+  min-height: 170px;
+  max-height: 355px;
+  scrollbar-color: #4c604e #18201a;
+}
+.net-chat-log li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 6px;
+  line-height: 1.45;
+  font-size: 0.82rem;
+  margin-bottom: 8px;
+  overflow-wrap: anywhere;
+}
+.net-chat-log strong {
+  color: #ddc48e;
+}
+.net-chat-log strong.net-own {
+  color: #b6d5a5;
+}
+.net-chat-log .net-system {
+  display: block;
+  color: #a1b39e;
+  font-size: 0.73rem;
+}
+.net-system i {
+  display: inline-block;
+  vertical-align: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #829575;
+  margin-right: 6px;
+}
+.net-chat form {
+  padding: 9px;
+  display: flex;
+  gap: 7px;
+  border-top: 1px solid var(--net-border);
+  background: #171f19;
+}
+.net-chat form input {
+  border: 1px solid #465747;
+  border-radius: 5px;
+  background: #111a14;
+  min-height: 34px;
+  padding: 6px 8px;
+  font-size: 0.84rem;
+}
+.net-send {
+  display: grid;
+  place-items: center;
+  background: #46513b;
+  color: #eddbab;
+  border: 1px solid #687358;
+  border-radius: 5px;
+  width: 37px;
+  flex: none;
+}
+.net-chat .net-error {
+  margin: 7px;
+}
+@media (min-width: 1500px) {
+  .net-main {
+    padding-top: 60px;
+  }
+  .net-page-heading {
+    padding: 40px;
+  }
+}
+@media (max-width: 840px) {
+  .net-room-body {
+    grid-template-columns: minmax(0, 1.45fr) minmax(195px, 0.85fr);
+  }
+  .net-room-title {
+    max-width: 235px;
+  }
+  .net-room-list td,
+  .net-room-list th {
+    padding-inline: 6px;
+  }
+  .net-table-value small {
+    display: block;
+    font-size: 0.67rem;
+  }
+  .net-search {
+    max-width: none;
+  }
+}
+@media (max-width: 700px) {
+  .net-main {
+    padding: 17px 12px 34px;
+  }
+  .net-mast-inner {
+    min-height: 53px;
+    padding-inline: 13px;
+  }
+  .net-brand {
+    font-size: 1.28rem;
+    gap: 6px;
+  }
+  .net-brand img {
+    width: 28px;
+    height: 28px;
+  }
+  .net-mast-actions {
+    gap: 9px;
+  }
+  .net-identity {
+    padding-left: 8px;
+  }
+  .net-identity .net-avatar {
+    width: 23px;
+    height: 23px;
+    font-size: 0.8rem;
+  }
+  .net-identity strong {
+    max-width: 18vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .net-offline,
+  .net-identity {
+    font-size: 0.73rem;
+    gap: 4px;
+  }
+  .net-page-heading {
+    padding: 23px 17px 19px;
+    gap: 13px;
+  }
+  .net-page h1 {
+    font-size: clamp(2.1rem, 7vw, 2.9rem);
+  }
+  .net-host {
+    font-size: 0.82rem;
+    min-height: 34px;
+    padding: 6px 12px;
+  }
+  .net-banner {
+    background-size:
+      100% 100%,
+      auto 118%;
+    background-position:
+      center,
+      right 40%;
+  }
+  .net-presence {
+    padding: 9px 12px;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .net-presence > div {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1px 4px;
+    align-items: center;
+  }
+  .net-presence dt {
+    grid-column: span 2;
+    font-size: 0.65rem;
+    line-height: 1.2;
+  }
+  .net-presence dd {
+    font-size: 0.85rem;
+  }
+  .net-presence svg {
+    width: 13px;
+    height: 13px;
+  }
+  .net-browser {
+    margin-top: 14px;
+  }
+  .net-tools {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 7px;
+    padding: 10px;
+  }
+  .net-search {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 35px;
+    font-size: 0.82rem;
+  }
+  .net-filter-button {
+    justify-self: start;
+  }
+  .net-sort,
+  .net-filter-button {
+    min-height: 30px;
+    font-size: 0.75rem;
+  }
+  .net-sort select {
+    min-height: 29px;
+    max-width: 145px;
+  }
+  .net-room-list,
+  .net-room-list tbody {
+    display: block;
+  }
+  .net-room-list thead {
+    position: absolute;
+    clip-path: inset(50%);
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+  }
+  .net-room-list tbody tr {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    grid-template-areas: 'title title title status' 'humans bots points join';
+    gap: 8px 9px;
+    padding: 12px;
+    border-bottom: 1px solid var(--net-border);
+  }
+  .net-room-list tbody tr:last-child {
+    border-bottom: none;
+  }
+  .net-room-list td,
+  .net-room-list td:first-child,
+  .net-room-list td:last-child {
+    border: 0;
+    padding: 0;
+    align-self: center;
+  }
+  .net-room-title {
+    gap: 7px;
+    max-width: none;
+  }
+  .net-room-title strong {
+    font-size: 0.92rem;
+  }
+  .net-room-title small,
+  .net-table-value small {
+    font-size: 0.67rem;
+  }
+  .net-room-mark {
+    width: 28px;
+    height: 30px;
+  }
+  .net-room-mark svg {
+    width: 16px;
+  }
+  .net-title-cell {
+    grid-area: title;
+  }
+  .net-humans-cell {
+    grid-area: humans;
+  }
+  .net-bots-cell {
+    grid-area: bots;
+  }
+  .net-points-cell {
+    grid-area: points;
+  }
+  .net-status-cell {
+    grid-area: status;
+    justify-self: end;
+  }
+  .net-join-cell {
+    grid-area: join;
+  }
+  .net-table-value {
+    font-size: 0.75rem;
+    gap: 3px;
+  }
+  .net-table-value svg {
+    width: 12px;
+    margin: 0;
+  }
+  .net-status {
+    font-size: 0.61rem;
+    padding: 3px 6px;
+    gap: 4px;
+  }
+  .net-join {
+    font-size: 0.73rem;
+    min-height: 29px;
+    padding: 4px 8px;
+  }
+  .net-filters {
+    padding: 10px;
+    gap: 9px;
+  }
+  .net-filter-checks,
+  .net-filter-selects {
+    gap: 7px 11px;
+  }
+  .net-filter-selects select {
+    padding: 4px;
+  }
+  .net-room-body {
+    grid-template-columns: 1fr;
+    margin-top: 14px;
+  }
+  .net-room-heading {
+    gap: 10px;
+  }
+  .net-room-heading h1 {
+    margin: 6px 0 3px;
+  }
+  .net-room-controls .net-secondary {
+    min-height: 29px;
+    padding: 5px 8px;
+    font-size: 0.74rem;
+  }
+  .net-seating-head,
+  .net-chat-head {
+    padding: 10px 12px;
+  }
+  .net-teams {
+    padding: 11px;
+    gap: 10px;
+  }
+  .net-seat {
+    padding: 7px 8px;
+    gap: 4px;
+  }
+  .net-seat-pair {
+    gap: 7px;
+  }
+  .net-seat-top {
+    min-height: 20px;
+  }
+  .net-occupant {
+    gap: 5px;
+  }
+  .net-occupant strong {
+    font-size: 0.8rem;
+  }
+  .net-occupant .net-avatar,
+  .net-vacancy,
+  .net-bot-avatar {
+    height: 27px;
+    width: 27px;
+  }
+  .net-chat-log {
+    min-height: 90px;
+    max-height: 220px;
+  }
+}
+@media (max-width: 375px) {
+  .net-mast-actions {
+    gap: 5px;
+  }
+  .net-mast-inner {
+    padding-inline: 9px;
+  }
+  .net-identity .net-avatar {
+    display: none;
+  }
+  .net-presence dt {
+    font-size: 0.6rem;
+  }
+  .net-room-list tbody tr {
+    gap: 6px;
+  }
+  .net-table-value small {
+    font-size: 0.61rem;
+  }
+  .net-check {
+    font-size: 0.78rem;
+  }
+  .net-field {
+    font-size: 0.78rem;
+  }
+}

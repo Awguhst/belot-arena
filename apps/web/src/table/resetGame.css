@@ -1,0 +1,35 @@
+.mast-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 9px;
+  border: 1px solid #526348;
+  border-radius: 6px;
+  color: #ddd8c1;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+.mast-reset:hover {
+  background: #2b3c2b;
+}
+@media (max-width: 650px), (max-height: 470px) {
+  .mast-reset {
+    gap: 4px;
+    padding-inline: 6px;
+    height: 28px;
+    font-size: 0.69rem;
+  }
+  .mast-reset svg {
+    width: 13px;
+  }
+}
+@media (max-width: 350px) {
+  .mast-reset {
+    width: 30px;
+  }
+  .mast-reset span {
+    display: none;
+  }
+}

@@ -1,0 +1,1933 @@
+.match-viewport {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background: #111b17;
+}
+.arena[data-theme='club'] {
+  --felt-ink: #164c39;
+  --felt-base: #164936;
+  --felt-texture: url('/art/emerald-baize.webp');
+  --metal: #d1ae73;
+  --paper: #f6f0df;
+  --friendly: #95ceac;
+  --foe: #d9a483;
+  --rail: #151e19;
+  --back-base: #683e39;
+  --back-ink: #ceb68a;
+}
+.arena {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: clamp(53px, 7dvh, 70px) minmax(0, 1fr) clamp(50px, 7.2dvh, 72px);
+  background: var(--rail);
+  color: #f5f1e6;
+  --card-w: clamp(80px, min(8.65vw, 15.8dvh), 141px);
+  --fan-bend: 1.25px;
+  --card-h: calc(var(--card-w) * 1.46);
+  --step: calc(var(--card-w) * 0.64);
+  font-family: var(--sans);
+}
+.arena button:focus-visible,
+.arena summary:focus-visible {
+  outline: 2px solid #ffe3a1;
+  outline-offset: 3px;
+}
+.arena-mast,
+.arena-dock {
+  display: flex;
+  align-items: center;
+  padding-inline: clamp(15px, 2.5vw, 46px);
+  gap: 17px;
+  position: relative;
+  z-index: 9;
+  background: linear-gradient(90deg, #151e19, #1a251e 65%, #162019);
+  box-shadow: 0 2px 12px #00170c66;
+}
+.arena-mast {
+  height: 100%;
+  border-bottom: 1px solid #766b45;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: max(clamp(15px, 2.5vw, 46px), env(safe-area-inset-left));
+}
+.arena-icon {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: #d0d6c8;
+}
+.arena-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.arena-icon:hover,
+.dock-side button:hover:not(:disabled) {
+  background: #344033;
+  border-color: #58624d;
+  color: #f3dfb1;
+}
+.mast-divider {
+  display: block;
+  width: 1px;
+  height: 20px;
+  background: #495141;
+}
+.arena-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+  color: #f1e5c9;
+}
+.arena-wordmark img {
+  width: 33px;
+  height: 33px;
+  border: 1px solid #8a744b;
+  border-radius: 8px;
+}
+.arena-wordmark span {
+  font: 1.55rem var(--serif);
+  letter-spacing: -0.06em;
+}
+.arena-wordmark em {
+  color: #dab980;
+  font-weight: 400;
+}
+.arena-mast h1 {
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 470;
+  color: #d0d4c9;
+  letter-spacing: 0.01em;
+}
+.mast-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+}
+.mast-actions > .mast-divider {
+  margin: 0 7px;
+}
+.mode-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 9px;
+  border: 1px solid #526348;
+  font-size: 0.77rem;
+  color: #d8e2cf;
+  border-radius: 30px;
+}
+.mode-control:hover {
+  background: #2b3c2b;
+}
+.mode-light {
+  width: 5px;
+  height: 5px;
+  background: #a8c497;
+  box-shadow: 0 0 6px #a0ce84;
+  border-radius: 50%;
+}
+.arena-surface {
+  position: relative;
+  min-height: 0;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--felt-base);
+  background-image:
+    radial-gradient(ellipse at 50% 44%, #285c422b 10%, #0a302622 54%, #031f17a6 100%),
+    var(--felt-texture);
+  background-size: cover;
+  background-position: center;
+  box-shadow: inset 0 0 55px #031c1773;
+}
+.felt-inlay {
+  position: absolute;
+  inset: 11px 13px;
+  z-index: -1;
+  border: 1px solid #a9a37136;
+  pointer-events: none;
+}
+.felt-racetrack {
+  position: absolute;
+  inset: 11% 7% 10%;
+  border: 1.4px solid #d4c18036;
+  border-radius: 50% / 47%;
+  box-shadow: inset 0 1px 0 #0b31282b;
+}
+.felt-racetrack.inner {
+  inset: calc(11% + 6px) calc(7% + 6px) calc(10% + 6px);
+  border-color: #a9bd8b2e;
+  border-width: 1px;
+  box-shadow: none;
+}
+.etched-corner {
+  position: absolute;
+  width: clamp(48px, 6vw, 90px);
+  height: auto;
+  color: #c0a4687d;
+  stroke-width: 1.2px;
+}
+.etched-corner.nw {
+  top: 0;
+  left: 0;
+}
+.etched-corner.ne {
+  top: 0;
+  right: 0;
+  transform: scaleX(-1);
+}
+.etched-corner.sw {
+  bottom: 0;
+  left: 0;
+  transform: scaleY(-1);
+}
+.etched-corner.se {
+  bottom: 0;
+  right: 0;
+  transform: scale(-1);
+}
+.table-stamp {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  translate: -50% -50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #cbb77c;
+  opacity: 0.24;
+  pointer-events: none;
+  user-select: none;
+  text-shadow: 0 1px 1px #0f3023;
+}
+.table-stamp svg {
+  width: clamp(86px, 8.5vw, 145px);
+  height: auto;
+}
+.table-stamp > span {
+  font: italic clamp(23px, 2.6vw, 43px)/1.14 var(--serif);
+  letter-spacing: -0.055em;
+}
+.table-stamp small {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  font:
+    11px Georgia,
+    serif;
+  white-space: nowrap;
+}
+.table-stamp small > i {
+  width: 21px;
+  height: 1px;
+  background: currentColor;
+}
+.arena-surface[data-bidding='true'] .table-stamp {
+  top: 33%;
+  opacity: 0.33;
+}
+.score-anchor,
+.contract-instrument {
+  position: absolute;
+  top: clamp(23px, 3.1dvh, 41px);
+  z-index: 4;
+}
+.score-anchor {
+  left: clamp(24px, 3.1vw, 64px);
+}
+.contract-instrument {
+  right: clamp(24px, 3.1vw, 64px);
+  display: flex;
+  min-width: 161px;
+  align-items: flex-start;
+  flex-direction: column;
+  padding: 12px 16px;
+  border: 1px solid #96a47b60;
+  border-radius: 8px;
+  background: linear-gradient(115deg, #15362bec, #142b24d9);
+  box-shadow: 0 5px 15px #032b1738;
+  text-align: left;
+}
+.contract-label {
+  font-size: 0.61rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: #c2c6ab;
+}
+.contract-value {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 5px 0 9px;
+  color: #ebd5a5;
+  line-height: 1.2;
+}
+.contract-value > svg {
+  width: 17px;
+  height: 17px;
+}
+.contract-value > strong {
+  color: #eeeada;
+  font: 1.18rem/1.2 var(--serif);
+}
+.contract-value > em {
+  font: 600 0.7rem var(--sans);
+  border: 1px solid #9d8654;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.contract-instrument > small {
+  font-size: 0.71rem;
+  color: #c1c9b7;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+}
+.contract-instrument small i {
+  height: 9px;
+  align-self: center;
+  width: 1px;
+  background: #79866f87;
+  margin: 0 3px;
+}
+.contract-instrument small b {
+  color: #e0e4d0;
+  font-weight: 520;
+}
+.contract-instrument small b span {
+  color: #9cae99;
+}
+.station {
+  position: absolute;
+  z-index: 3;
+  text-align: center;
+  color: #f3f1e2;
+  --portrait-size: clamp(54px, min(5.9vw, 9.3dvh), 90px);
+}
+.station.pos-north {
+  left: 50%;
+  top: clamp(18px, 3.2dvh, 36px);
+  transform: translateX(-50%);
+}
+.station.pos-east,
+.station.pos-west {
+  top: 44%;
+  transform: translate(-50%, -50%);
+}
+.station.pos-west {
+  left: 14.5%;
+}
+.station.pos-east {
+  left: 85.5%;
+}
+.station-id {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+}
+.portrait-ring {
+  width: var(--portrait-size);
+  height: var(--portrait-size);
+  border: 1px solid #c6b085b8;
+  border-radius: 50%;
+  padding: 4px;
+  position: relative;
+  background: linear-gradient(135deg, #5b6243, #18392b 68%);
+  box-shadow: 0 2px 9px #03190fb8;
+}
+.portrait-ring:before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1px solid #e3ca7e;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #e1cc6d35;
+  opacity: 0;
+  pointer-events: none;
+}
+.portrait-disc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #172f24;
+  display: grid;
+  place-items: center;
+  background: #304e3d;
+}
+.portrait-disc img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.08);
+}
+.seat-belot-announce {
+  display: none;
+}
+.station:has(.spoken-bid) .portrait-disc {
+  animation: seat-bid calc(var(--turn-ms) * 2) ease-in-out;
+}
+.station:has(.spoken-pass) .portrait-disc {
+  animation-name: seat-pass;
+}
+.station:has(.seat-belot-announce) .portrait-ring::before,
+.station.won-hand .portrait-ring::before,
+.station.won-match .portrait-ring::before {
+  animation: seat-halo calc(var(--turn-ms) * 3) ease-out;
+}
+.station.lost-hand .portrait-disc {
+  transition: filter var(--settle-ms);
+}
+.station.is-active .portrait-ring {
+  border-color: #ebd99a;
+  box-shadow:
+    0 0 14px #cbaa5940,
+    0 4px 7px #16321fb8;
+}
+.station.is-active .portrait-ring:before {
+  opacity: 0.75;
+  animation: breathe-ring 2.7s ease-in-out infinite;
+}
+.station.took-trick .portrait-ring,
+.station.won-hand .portrait-ring,
+.station.won-match .portrait-ring {
+  border-color: #f6d68d;
+}
+.station.lost-hand .portrait-disc {
+  filter: saturate(0.65);
+}
+.station.won-match .winner-crown {
+  color: #f7ce7a;
+  position: absolute;
+  top: -12px;
+  right: -3px;
+  fill: #394835;
+}
+.dealer-chip {
+  position: absolute;
+  right: -3px;
+  bottom: -1px;
+  display: grid;
+  place-items: center;
+  border-radius: 100%;
+  width: 20px;
+  height: 20px;
+  color: #37301e;
+  background: linear-gradient(155deg, #efe1ac, #b89f61);
+  border: 1px solid #6a5f3a;
+  box-shadow: 0 1px 2px #062419;
+  font: 700 0.66rem var(--sans);
+}
+.station-name strong {
+  font: 400 clamp(1.13rem, 1.6vw, 1.62rem)/1.05 var(--serif);
+  text-shadow: 0 1px 5px #092719;
+}
+.station-name small {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #c9d6c4;
+  font-size: 0.71rem;
+  line-height: 1.2;
+  margin-top: 4px;
+}
+.team-mark {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border: 1px solid #a5cfae;
+  border-radius: 50%;
+  background: #a1c5a46b;
+}
+.team-them .team-mark {
+  border-radius: 0;
+  border-color: #dfae8b;
+  background: #b8856759;
+  transform: rotate(45deg);
+}
+.station.pos-north .station-id {
+  flex-direction: row;
+  gap: 12px;
+  text-align: left;
+}
+.pos-north .station-name small,
+.pos-south .station-name small {
+  justify-content: flex-start;
+}
+.fan-and-pile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 9px;
+}
+.opponent-fan {
+  height: 42px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 26px;
+  padding-right: 0;
+}
+.back-print {
+  display: block;
+  position: relative;
+  border: 2px solid #e3d3ac;
+  border-radius: 3px;
+  background-color: var(--back-base);
+  background-image:
+    repeating-linear-gradient(48deg, transparent 0 3px, #e2ca984d 3px 3.7px, transparent 3.7px 6px),
+    repeating-linear-gradient(-48deg, transparent 0 3px, #e2ca984d 3px 3.7px, transparent 3.7px 6px);
+  box-shadow:
+    inset 0 0 0 1px #54382e,
+    inset 0 0 0 2px #c1a778,
+    0 2px 3px #082b20b0;
+}
+.opponent-fan > .back-print {
+  width: 26px;
+  height: 37px;
+  margin-left: -17px;
+  transform-origin: center 75%;
+  transform: translateY(var(--drop)) rotate(var(--tilt));
+  transition: transform var(--settle-ms);
+}
+.opponent-fan > .back-print:first-child {
+  margin-left: 0;
+}
+.back-print:after {
+  content: '♠';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  font:
+    9px/1 Georgia,
+    serif;
+  color: #e3ca97;
+  background: var(--back-base);
+  padding: 1px;
+}
+.captured-pile {
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 3px 5px;
+  color: #b5c9b5;
+  border: 1px solid #8ba68b47;
+  border-radius: 4px;
+  background: #163e2d85;
+  font-size: 0.69rem;
+}
+.captured-pile:hover {
+  border-color: #c0b788;
+}
+.captured-pile b {
+  min-width: 1ch;
+  font-weight: 550;
+}
+.pile-cards {
+  position: relative;
+  width: 15px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+}
+.pile-cards .back-print {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 14px;
+  height: 19px;
+  border-width: 1px;
+  transform: translate(calc(var(--layer) * 0.55px), calc(var(--layer) * -0.7px)) rotate(-9deg);
+}
+.pile-cards .back-print:after {
+  font-size: 5px;
+}
+.captured-pile.filled {
+  color: #eadcb9;
+}
+.spoken-bid {
+  position: absolute;
+  left: 100%;
+  top: 10%;
+  white-space: nowrap;
+  padding: 5px 10px;
+  border: 1px solid #c1ae7a;
+  border-radius: 8px 8px 8px 1px;
+  background: #ece8d3;
+  color: #343d2d;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 3px 8px #16302466;
+  animation: bid-bubble var(--spoken-ms) ease-out both;
+}
+.spoken-bid i {
+  font-style: normal;
+  margin-right: 3px;
+}
+.pos-east .spoken-bid {
+  left: auto;
+  right: 100%;
+  border-radius: 8px 8px 1px 8px;
+}
+.spoken-contra,
+.spoken-recontra {
+  background: #edd29c;
+  color: #552e29;
+}
+.spoken-hearts,
+.spoken-diamonds {
+  color: #943d38;
+}
+.dealing-deck {
+  position: absolute;
+  width: 32px;
+  height: 46px;
+  box-shadow:
+    -1px 2px 0 #cabd9a,
+    -2px 3px 0 #85785f,
+    -3px 4px 0 #c7bba0,
+    -4px 5px 0 #80755e,
+    -5px 6px 0 #d2c2a4,
+    -6px 8px 8px #073122af;
+  border-radius: 4px;
+  transform: rotate(-15deg);
+  z-index: 1;
+}
+.dealing-deck > i {
+  width: 100%;
+  height: 100%;
+}
+.dealing-deck span {
+  display: none;
+}
+.dealer-west {
+  left: 22%;
+  top: 51%;
+}
+.dealer-east {
+  right: 22%;
+  top: 51%;
+  transform: rotate(15deg);
+}
+.dealer-north {
+  left: calc(50% + 109px);
+  top: 10%;
+}
+.dealer-south {
+  right: 12%;
+  bottom: 7%;
+}
+.dealing-deck.stowed {
+  visibility: hidden;
+}
+.arena-trick {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: clamp(215px, 24vw, 350px);
+  height: clamp(175px, 32dvh, 285px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 3;
+}
+.trick-card {
+  position: absolute;
+  width: clamp(64px, min(8.1vw, 13.3dvh), 118px);
+  aspect-ratio: 1/1.46;
+  transform: translate(-50%, -50%) rotate(var(--landing));
+  filter: drop-shadow(1px 5px 3px #08261866);
+}
+.played-north {
+  left: 47%;
+  top: 25%;
+  z-index: 1;
+  --landing: 5deg;
+}
+.played-west {
+  left: 19%;
+  top: 50%;
+  z-index: 2;
+  --landing: -12deg;
+}
+.played-east {
+  left: 82%;
+  top: 52%;
+  z-index: 2;
+  --landing: 11deg;
+}
+.played-south {
+  left: 51%;
+  top: 75%;
+  z-index: 3;
+  --landing: -4deg;
+}
+.winning-card > .deck-face {
+  box-shadow:
+    0 0 0 2px #f5d595,
+    0 0 19px #f4c77180;
+}
+.deck-face {
+  display: block;
+  position: relative;
+  container-type: inline-size;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #cabea1;
+  border-radius: 6.4% / 4.4%;
+  background: linear-gradient(125deg, #fffbed, var(--paper) 68%, #e8dec8);
+  color: #242b26;
+  box-shadow: inset 0 0 0 1px #fffcf160;
+  font-family: Georgia, 'Times New Roman', serif;
+  text-shadow: none;
+}
+.deck-face.suit-diamonds,
+.deck-face.suit-hearts {
+  color: #a13f38;
+}
+.deck-index {
+  position: absolute;
+  top: 5%;
+  left: 6%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  font:
+    normal 24cqw/0.91 Georgia,
+    serif;
+  letter-spacing: -0.08em;
+  z-index: 2;
+}
+.deck-index i {
+  font:
+    normal 16cqw/0.95 Georgia,
+    serif;
+  letter-spacing: 0;
+}
+.deck-index.reversed {
+  inset: auto 6% 5% auto;
+  transform: rotate(180deg);
+}
+.deck-portrait {
+  position: absolute;
+  inset: 16% 16%;
+  border: 1px solid #a7976bbf;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px #f4ebd0;
+}
+.deck-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+}
+.deck-pips {
+  position: absolute;
+  inset: 13% 20%;
+}
+.deck-pips i {
+  position: absolute;
+  translate: -50% -50%;
+  font:
+    normal 19cqw/1 Georgia,
+    serif;
+}
+.deck-ace {
+  position: absolute;
+  inset: 25% 16%;
+  display: grid;
+  place-items: center;
+}
+.deck-ace i {
+  position: relative;
+  z-index: 1;
+  font:
+    normal 60cqw/1 Georgia,
+    serif;
+}
+.deck-ace:before {
+  content: '';
+  position: absolute;
+  inset: 16% 17%;
+  border: 1px solid #c2af7d82;
+  transform: rotate(45deg);
+  outline: 1px solid #c2af7d47;
+  outline-offset: 3px;
+}
+.deck-value {
+  position: absolute;
+  left: 5%;
+  bottom: 5%;
+  min-width: 16px;
+  padding: 2px;
+  color: #524a36;
+  background: #eadbb6;
+  border-radius: 3px;
+  text-align: center;
+  font: 600 max(9px, 10cqw) var(--sans);
+}
+.south-zone {
+  position: absolute;
+  bottom: clamp(17px, 3.2dvh, 35px);
+  left: 50%;
+  width: min(78%, 900px);
+  height: calc(var(--card-h) + 41px);
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 13px;
+}
+.turn-token {
+  height: 24px;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #153d2ee6;
+  border: 1px solid #81987a75;
+  border-radius: 24px;
+  padding: 3px 12px;
+  color: #d5dfcf;
+  line-height: 1;
+  font-size: 0.73rem;
+  box-shadow: 0 2px 7px #082f202b;
+  white-space: nowrap;
+}
+.turn-token i {
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  background: #a2b299;
+}
+.turn-token.is-yours {
+  color: #f1dda6;
+  border-color: #cab473b3;
+  background: #293f2be6;
+}
+.turn-token.is-yours i {
+  background: #e9c57d;
+  box-shadow: 0 0 8px #e5c7805e;
+}
+.hand-cards {
+  position: relative;
+  width: 100%;
+  height: var(--card-h);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+.hand-card {
+  --fan-drop: calc(var(--fan-depth) * var(--fan-bend));
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--card-w);
+  height: var(--card-h);
+  padding: 0;
+  border: 0;
+  border-radius: 7%;
+  z-index: var(--order);
+  transform: translate(calc(-50% + var(--offset) * var(--step)), var(--fan-drop))
+    rotate(var(--fan-rotate));
+  transform-origin: center 87%;
+  pointer-events: auto;
+  transition: transform var(--settle-ms) cubic-bezier(0.2, 0.75, 0.15, 1);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.hand-card > .deck-face {
+  box-shadow:
+    -2px 3px 8px #031a13a6,
+    0 9px 12px #0b26194d;
+  transition: transform var(--hover-ms) cubic-bezier(0.2, 0.75, 0.15, 1);
+}
+.hand-card[data-legal='false'] {
+  cursor: default;
+}
+.hand-card.eligible {
+  translate: 0 -2px;
+}
+.hand-card.unavailable {
+  filter: brightness(0.78) saturate(0.65);
+}
+.hand-card.suggested .deck-face {
+  outline: 2px solid #e5bc67;
+  outline-offset: -3px;
+}
+.hand-card:focus-visible {
+  z-index: 20;
+}
+@media (hover: hover) {
+  .hand-card[data-legal='true']:hover {
+    z-index: 24;
+  }
+  .hand-card[data-legal='true']:hover > .deck-face {
+    transform: translateY(-13px) scale(1.035);
+  }
+}
+.hand-card[data-legal='true']:focus-visible > .deck-face {
+  transform: translateY(-9px);
+}
+.hand-card:active[data-legal='true'] {
+  filter: brightness(1.07);
+}
+.hand-card.bumped .deck-face {
+  animation: invalid-card 240ms;
+}
+.south-pile {
+  position: absolute;
+  right: clamp(28px, 5vw, 84px);
+  bottom: 25px;
+  z-index: 6;
+}
+.south-pile .captured-pile {
+  height: 29px;
+}
+.auction-console {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--card-h) + clamp(72px, 10dvh, 110px));
+  transform: translateX(-50%);
+  width: clamp(400px, 35vw, 555px);
+  z-index: 6;
+  padding: 13px 16px 11px;
+  border: 1px solid #adac7b83;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #1d3d30fa, #152d24f5);
+  box-shadow:
+    0 8px 23px #082b1d63,
+    inset 0 0 0 3px #c4bd8610;
+}
+.auction-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+.auction-title h2 {
+  font: 400 clamp(17px, 1.55vw, 25px)/1.12 var(--serif);
+  color: #f7efdc;
+  letter-spacing: -0.025em;
+}
+.auction-title i {
+  width: 22px;
+  height: 1px;
+  background: #a6986d80;
+}
+.auction-title svg {
+  width: 5px;
+  height: 5px;
+  fill: #bfaa77;
+  color: #bfaa77;
+}
+.auction-suits {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+}
+.auction-suits button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 51px;
+  border-radius: 5px;
+  background: linear-gradient(#334a3a, #293e32);
+  border: 1px solid #68796096;
+  color: #f0edda;
+  font-size: 0.71rem;
+  line-height: 1.14;
+  white-space: nowrap;
+  padding: 5px 2px;
+}
+.auction-suits button:hover[aria-disabled='false'],
+.auction-modifiers button:hover[aria-disabled='false'] {
+  background: #4e5a3f;
+  border-color: #d3b77b;
+}
+.auction-suits button[aria-disabled='true'],
+.auction-modifiers button[aria-disabled='true'] {
+  opacity: 0.44;
+  cursor: default;
+}
+.auction-suits .single-pip {
+  font:
+    1.52rem/0.9 Georgia,
+    serif;
+  color: #f2e5c7;
+}
+.auction-suits .pip-hearts,
+.auction-suits .pip-diamonds,
+.contract-value .pip-hearts,
+.contract-value .pip-diamonds {
+  color: #ea9b86;
+}
+.auction-suits button > svg {
+  width: 19px;
+  height: 21px;
+  color: #ddcead;
+}
+.four-pips {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 21px;
+  height: 21px;
+  place-content: center;
+  place-items: center;
+  font:
+    12px/0.85 Georgia,
+    serif;
+  color: #ecdeb9;
+}
+.four-pips i {
+  font-style: normal;
+}
+.four-pips i:nth-child(2),
+.four-pips i:nth-child(3) {
+  color: #de9787;
+}
+.auction-modifiers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-top: 6px;
+}
+.auction-modifiers button {
+  height: 29px;
+  font-size: 0.73rem;
+  font-weight: 500;
+  color: #e9e4d1;
+  border-radius: 4px;
+  background: #243a2e;
+  border: 1px solid #53684e;
+}
+.auction-modifiers button:first-child {
+  background: #d9c390;
+  color: #263320;
+  border-color: #d8c38d;
+}
+.auction-modifiers button i {
+  font: 500 0.64rem var(--sans);
+  margin-right: 4px;
+  color: #cbb785;
+}
+.auction-modifiers button:first-child:hover[aria-disabled='false'] {
+  color: #1d2b17;
+  background: #e8d3a0;
+}
+.manual-announcements {
+  position: absolute;
+  left: 3.5%;
+  bottom: 9%;
+  border: 1px solid #a59d70;
+  border-radius: 6px;
+  background: #1b392df5;
+  padding: 11px 13px;
+  z-index: 7;
+  max-width: 260px;
+}
+.manual-announcements legend {
+  padding: 2px 5px;
+  background: #253e2e;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  color: #dfc993;
+}
+.manual-announcements label {
+  display: block;
+  font-size: 0.79rem;
+  color: #eee6ce;
+}
+.manual-announcements input {
+  accent-color: #d1ae73;
+  margin-right: 5px;
+}
+.interaction-toast {
+  position: absolute;
+  bottom: calc(var(--card-h) + 84px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  width: max-content;
+  max-width: 75%;
+  border: 1px solid #9c865b;
+  background: #253b2ff5;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #fff0cd;
+}
+.arena-surface[data-bidding='true'] .interaction-toast {
+  bottom: auto;
+  top: 26%;
+}
+.stage-skip {
+  position: absolute;
+  right: 3%;
+  bottom: 68px;
+  color: #cfc5a5;
+  z-index: 7;
+}
+.match-save-notice {
+  position: fixed;
+  left: 10px;
+  bottom: 80px;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.arena-dock {
+  justify-content: space-between;
+  gap: 0;
+  box-shadow: 0 -2px 10px #03231944;
+  border-top: 1px solid #5d6349;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.dock-side {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.dock-side > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 6px 11px;
+  border: 1px solid #485744;
+  border-radius: 5px;
+  background: #253228;
+  color: #d5dece;
+  font-size: 0.79rem;
+}
+.dock-side svg {
+  width: 16px;
+  height: 16px;
+}
+.dock-side .hint-trigger {
+  background: #3b412c;
+  color: #e1cb97;
+  border-color: #6a6848;
+}
+.station.pos-south {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  --portrait-size: 35px;
+}
+.pos-south .station-id {
+  flex-direction: row;
+  gap: 9px;
+  text-align: left;
+}
+.pos-south .portrait-ring {
+  padding: 2px;
+}
+.pos-south .portrait-disc > svg {
+  height: 18px;
+  color: #e9dbb7;
+}
+.pos-south .station-name strong {
+  font-size: 1.01rem;
+}
+.pos-south .station-name small {
+  font-size: 0.64rem;
+  margin-top: 2px;
+}
+.pos-south .dealer-chip {
+  width: 14px;
+  height: 14px;
+  font-size: 8px;
+}
+.pos-south .spoken-bid {
+  left: 110%;
+  top: 0;
+}
+@keyframes breathe-ring {
+  0%,
+  100% {
+    opacity: 0.47;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+@keyframes invalid-card {
+  25% {
+    translate: -3px;
+  }
+  65% {
+    translate: 3px;
+  }
+}
+@keyframes bid-bubble {
+  0% {
+    opacity: 0;
+    translate: 0 5px;
+  }
+  15%,
+  82% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -2px;
+  }
+}
+@keyframes seat-bid {
+  40% {
+    transform: translateY(-2px) scale(1.045);
+  }
+}
+@keyframes seat-pass {
+  45% {
+    transform: translateY(2px) rotate(-3deg);
+  }
+}
+@keyframes seat-halo {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.96);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.24);
+  }
+}
+.arena[data-tempo='instant'] .spoken-bid,
+.arena[data-tempo='instant'] .station.is-active .portrait-ring:before,
+.arena[data-tempo='instant'] .hand-card.bumped .deck-face {
+  animation: none;
+}
+@media (min-width: 1600px) {
+  .auction-console {
+    width: 555px;
+    padding: 17px 21px 16px;
+  }
+  .auction-suits button {
+    min-height: 64px;
+  }
+  .auction-modifiers button {
+    height: 34px;
+  }
+  .opponent-fan > .back-print {
+    width: 30px;
+    height: 43px;
+  }
+  .station-name small {
+    font-size: 0.8rem;
+  }
+}
+@media (max-width: 1000px) {
+  .arena {
+    --card-w: clamp(77px, 10.5vw, 104px);
+  }
+  .arena-mast {
+    gap: 11px;
+  }
+  .score-anchor {
+    left: 22px;
+  }
+  .contract-instrument {
+    right: 22px;
+    min-width: 140px;
+  }
+  .station.pos-east {
+    left: 88%;
+  }
+  .station.pos-west {
+    left: 12%;
+  }
+  .auction-console {
+    width: 410px;
+  }
+  .arena-dock {
+    padding-inline: 16px;
+  }
+  .dock-side {
+    gap: 6px;
+  }
+  .dock-side > button {
+    padding: 6px 8px;
+  }
+}
+@media (max-width: 650px) and (orientation: portrait) {
+  .arena {
+    grid-template-rows: calc(49px + env(safe-area-inset-top, 0px)) minmax(0, 1fr) calc(
+        48px + env(safe-area-inset-bottom, 0px)
+      );
+    --card-w: clamp(59px, 17.8vw, 92px);
+    --fan-bend: 0.8px;
+    --step: calc(var(--card-w) * 0.59);
+  }
+  .arena-mast {
+    padding-inline: 10px;
+    gap: 8px;
+  }
+  .arena-wordmark img {
+    width: 27px;
+    height: 27px;
+  }
+  .arena-wordmark span {
+    font-size: 1.18rem;
+  }
+  .arena-wordmark {
+    gap: 6px;
+  }
+  .arena-mast h1,
+  .brand-split,
+  .mode-control,
+  .mast-actions > .mast-divider {
+    display: none;
+  }
+  .arena-icon {
+    width: 32px;
+    height: 33px;
+  }
+  .mast-actions {
+    gap: 2px;
+  }
+  .arena-mast > .mast-divider {
+    height: 16px;
+  }
+  .felt-inlay {
+    inset: 6px;
+  }
+  .felt-racetrack {
+    inset: 13% 3.7% 12%;
+    border-radius: 48% / 30%;
+  }
+  .felt-racetrack.inner {
+    inset: calc(13% + 4px) calc(3.7% + 4px) calc(12% + 4px);
+  }
+  .etched-corner {
+    width: 42px;
+  }
+  .score-anchor,
+  .contract-instrument {
+    top: 13px;
+  }
+  .score-anchor {
+    left: 13px;
+  }
+  .contract-instrument {
+    right: 13px;
+    min-width: 123px;
+    padding: 8px 10px;
+  }
+  .contract-label {
+    font-size: 0.58rem;
+  }
+  .contract-value {
+    gap: 4px;
+    margin: 4px 0 6px;
+  }
+  .contract-value > strong {
+    font-size: 0.96rem;
+  }
+  .contract-value > svg {
+    width: 13px;
+    height: 13px;
+  }
+  .contract-instrument > small {
+    font-size: 0.61rem;
+  }
+  .score-anchor .rw-score-hud.scoreboard {
+    width: 142px;
+    padding: 9px 10px 7px;
+  }
+  .score-anchor .rw-hud-teams {
+    margin: 4px 0 5px;
+  }
+  .score-anchor .rw-score-hud .rw-hud-team b {
+    font-size: 20px;
+  }
+  .station {
+    --portrait-size: clamp(43px, 11.8vw, 62px);
+  }
+  .station.pos-north {
+    top: max(90px, 12%);
+  }
+  .station.pos-west,
+  .station.pos-east {
+    top: 37%;
+  }
+  .station.pos-west {
+    left: 13%;
+  }
+  .station.pos-east {
+    left: 87%;
+  }
+  .station-id {
+    gap: 5px;
+  }
+  .station.pos-north .station-id {
+    gap: 8px;
+  }
+  .portrait-ring {
+    padding: 2px;
+  }
+  .station-name strong {
+    font-size: 1.02rem;
+  }
+  .station-name small {
+    font-size: 0.61rem;
+    margin-top: 2px;
+    gap: 3px;
+  }
+  .team-mark {
+    width: 4px;
+    height: 4px;
+  }
+  .dealer-chip {
+    width: 15px;
+    height: 15px;
+    font-size: 9px;
+  }
+  .fan-and-pile {
+    margin-top: 5px;
+    gap: 4px;
+  }
+  .opponent-fan {
+    height: 28px;
+  }
+  .opponent-fan > .back-print {
+    width: 17px;
+    height: 24px;
+    margin-left: -13px;
+    border-width: 1px;
+  }
+  .opponent-fan > .back-print:first-child {
+    margin-left: 0;
+  }
+  .captured-pile {
+    height: 20px;
+    gap: 2px;
+    font-size: 0.6rem;
+    padding: 2px 3px;
+  }
+  .pile-cards {
+    width: 10px;
+    height: 12px;
+  }
+  .pile-cards svg {
+    width: 11px;
+    height: 11px;
+  }
+  .pile-cards .back-print {
+    width: 9px;
+    height: 12px;
+  }
+  .spoken-bid {
+    font-size: 0.62rem;
+    padding: 3px 5px;
+    top: -8px;
+  }
+  .table-stamp {
+    top: 46%;
+    opacity: 0.21;
+  }
+  .arena-surface[data-bidding='true'] .table-stamp {
+    top: 37%;
+    opacity: 0.31;
+  }
+  .table-stamp svg {
+    width: 76px;
+  }
+  .table-stamp > span {
+    font-size: 25px;
+  }
+  .table-stamp small {
+    font-size: 8px;
+    margin-top: 4px;
+  }
+  .table-stamp small > i {
+    width: 10px;
+  }
+  .auction-console {
+    width: min(390px, calc(100% - 30px));
+    bottom: calc(var(--card-h) + 72px);
+    padding: 9px 9px 8px;
+    border-radius: 9px;
+  }
+  .auction-title {
+    margin-bottom: 8px;
+  }
+  .auction-title h2 {
+    font-size: 18px;
+  }
+  .auction-suits {
+    gap: 4px;
+  }
+  .auction-suits button {
+    font-size: 0.61rem;
+    white-space: normal;
+    min-height: 45px;
+    gap: 3px;
+  }
+  .auction-suits .single-pip {
+    font-size: 19px;
+  }
+  .auction-suits button > svg {
+    width: 16px;
+    height: 18px;
+  }
+  .auction-suits .four-pips {
+    width: 17px;
+    height: 18px;
+    font-size: 10px;
+  }
+  .auction-modifiers {
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .auction-modifiers button {
+    height: 30px;
+    font-size: 0.68rem;
+  }
+  .south-zone {
+    width: 100%;
+    height: calc(var(--card-h) + 34px);
+    bottom: 22px;
+    gap: 9px;
+  }
+  .turn-token {
+    height: 22px;
+    min-height: 22px;
+    font-size: 0.68rem;
+    padding: 3px 10px;
+  }
+  .south-pile {
+    bottom: calc(var(--card-h) + 35px);
+    right: 17px;
+  }
+  .south-pile .captured-pile {
+    height: 22px;
+  }
+  .arena-trick {
+    width: clamp(131px, 39vw, 230px);
+    height: clamp(137px, 21dvh, 190px);
+    top: 49%;
+  }
+  .trick-card {
+    width: clamp(52px, 15vw, 78px);
+  }
+  .played-west {
+    left: 18%;
+  }
+  .played-east {
+    left: 82%;
+  }
+  .dealing-deck {
+    width: 20px;
+    height: 29px;
+  }
+  .dealer-west {
+    left: 22%;
+    top: 45%;
+  }
+  .dealer-east {
+    right: 22%;
+    top: 45%;
+  }
+  .dealer-north {
+    left: calc(50% + 65px);
+    top: 17%;
+  }
+  .dealer-south {
+    right: 8%;
+    bottom: 20%;
+  }
+  .arena-dock {
+    padding-inline: 10px;
+  }
+  .dock-side {
+    gap: 5px;
+  }
+  .dock-side > button {
+    min-height: 32px;
+    min-width: 32px;
+    padding: 5px;
+  }
+  .dock-side > button > span,
+  .dock-side .coach-toggle {
+    display: none;
+  }
+  .dock-side .hint-trigger {
+    display: flex;
+  }
+  .station.pos-south {
+    --portrait-size: 29px;
+  }
+  .pos-south .station-name strong {
+    font-size: 0.9rem;
+  }
+  .pos-south .station-name small {
+    font-size: 0.58rem;
+  }
+  .manual-announcements {
+    left: 12px;
+    bottom: calc(var(--card-h) + 65px);
+    max-width: calc(100% - 24px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px;
+  }
+  .manual-announcements label {
+    font-size: 0.7rem;
+  }
+  .interaction-toast {
+    bottom: calc(var(--card-h) + 68px);
+    font-size: 0.74rem;
+  }
+  .arena-surface[data-bidding='true'] .interaction-toast {
+    top: 27%;
+  }
+  .stage-skip {
+    bottom: calc(var(--card-h) + 63px);
+    right: 15px;
+  }
+  .arena {
+    --table-announcement-top: 27%;
+  }
+}
+@media (max-width: 650px) and (orientation: portrait) and (max-height: 690px) {
+  .station.pos-north {
+    top: 84px;
+    --portrait-size: 38px;
+  }
+  .station.pos-west,
+  .station.pos-east {
+    top: 33%;
+    --portrait-size: 37px;
+  }
+  .arena-surface[data-bidding='true'] .table-stamp {
+    top: 33%;
+  }
+  .arena-surface[data-bidding='true'] .table-stamp svg {
+    width: 57px;
+  }
+  .table-stamp > span {
+    font-size: 20px;
+  }
+  .auction-title h2 {
+    font-size: 16px;
+  }
+  .arena-surface[data-bidding='true'] .fan-and-pile {
+    gap: 3px;
+  }
+  .auction-console {
+    bottom: calc(var(--card-h) + 53px);
+  }
+  .south-zone {
+    bottom: 12px;
+  }
+  .turn-token {
+    font-size: 0.62rem;
+  }
+  .dealer-west,
+  .dealer-east {
+    top: 41%;
+  }
+  .manual-announcements {
+    bottom: calc(var(--card-h) + 54px);
+  }
+}
+@media (orientation: landscape) and (max-height: 690px) {
+  .arena {
+    grid-template-rows: 44px minmax(0, 1fr) 43px;
+    --card-w: clamp(48px, 12.2dvh, 82px);
+    --fan-bend: 0.5px;
+  }
+  .arena-icon {
+    height: 30px;
+  }
+  .arena-wordmark img {
+    width: 26px;
+    height: 26px;
+  }
+  .arena-wordmark span {
+    font-size: 1.25rem;
+  }
+  .score-anchor,
+  .contract-instrument {
+    top: 15px;
+  }
+  .station {
+    --portrait-size: clamp(32px, 8.7dvh, 55px);
+  }
+  .station.pos-north {
+    top: 12px;
+  }
+  .fan-and-pile {
+    margin-top: 4px;
+  }
+  .opponent-fan {
+    height: 28px;
+  }
+  .opponent-fan > .back-print {
+    width: 19px;
+    height: 27px;
+    margin-left: -14px;
+    border-width: 1px;
+  }
+  .opponent-fan > .back-print:first-child {
+    margin-left: 0;
+  }
+  .station-name strong {
+    font-size: 1.1rem;
+  }
+  .station-name small {
+    font-size: 0.63rem;
+  }
+  .station.pos-east,
+  .station.pos-west {
+    top: 48%;
+  }
+  .arena-surface[data-bidding='true'] .table-stamp {
+    top: 30%;
+  }
+  .table-stamp svg {
+    width: 65px;
+  }
+  .table-stamp > span {
+    font-size: 22px;
+  }
+  .table-stamp small {
+    display: none;
+  }
+  .auction-console {
+    width: 365px;
+    padding: 7px 10px;
+    bottom: calc(var(--card-h) + 45px);
+  }
+  .auction-title {
+    margin-bottom: 5px;
+  }
+  .auction-title h2 {
+    font-size: 17px;
+  }
+  .auction-suits button {
+    min-height: 36px;
+    font-size: 0.66rem;
+  }
+  .auction-suits .single-pip {
+    font-size: 17px;
+  }
+  .auction-suits .four-pips {
+    height: 16px;
+    font-size: 9px;
+  }
+  .auction-suits button > svg {
+    height: 15px;
+  }
+  .auction-modifiers {
+    margin-top: 4px;
+  }
+  .auction-modifiers button {
+    height: 24px;
+  }
+  .south-zone {
+    height: calc(var(--card-h) + 26px);
+    bottom: 10px;
+    gap: 4px;
+  }
+  .turn-token {
+    height: 18px;
+    min-height: 18px;
+    font-size: 0.62rem;
+  }
+  .arena-trick {
+    height: 40%;
+    top: 42%;
+    width: 200px;
+  }
+  .trick-card {
+    width: clamp(41px, 11.8dvh, 69px);
+  }
+  .station.pos-south {
+    --portrait-size: 29px;
+  }
+  .pos-south .station-name small {
+    display: none;
+  }
+  .dock-side > button {
+    min-height: 29px;
+  }
+}
+@media (orientation: landscape) and (max-height: 470px) {
+  .arena {
+    grid-template-rows: 34px minmax(0, 1fr) 32px;
+    --card-w: clamp(43px, 12dvh, 58px);
+  }
+  .arena-mast,
+  .arena-dock {
+    padding-inline: max(12px, env(safe-area-inset-left));
+    gap: 7px;
+  }
+  .arena-wordmark img {
+    width: 23px;
+    height: 23px;
+  }
+  .arena-wordmark span {
+    font-size: 1.1rem;
+  }
+  .arena-mast h1,
+  .mode-control {
+    font-size: 0.66rem;
+  }
+  .arena-icon {
+    height: 25px;
+    width: 28px;
+  }
+  .arena-icon svg {
+    width: 15px;
+  }
+  .score-anchor {
+    left: 14px;
+  }
+  .contract-instrument {
+    right: 14px;
+    padding: 6px 10px;
+    min-width: 121px;
+  }
+  .score-anchor,
+  .contract-instrument {
+    top: 8px;
+  }
+  .score-anchor .rw-score-hud.scoreboard {
+    width: 139px;
+    padding: 6px 9px;
+  }
+  .score-anchor .rw-hud-teams {
+    margin: 4px 0 3px;
+  }
+  .score-anchor .rw-score-hud .rw-hud-team b {
+    font-size: 18px;
+  }
+  .contract-value {
+    margin: 2px 0 4px;
+  }
+  .contract-value strong {
+    font-size: 0.86rem;
+  }
+  .contract-instrument > small {
+    font-size: 0.6rem;
+  }
+  .station.pos-north {
+    top: 6px;
+  }
+  .pos-north .fan-and-pile {
+    margin-top: 0;
+  }
+  .station.pos-east,
+  .station.pos-west {
+    top: 52%;
+  }
+  .station-name small {
+    font-size: 0.57rem;
+  }
+  .station-id {
+    gap: 4px;
+  }
+  .portrait-ring {
+    padding: 2px;
+  }
+  .table-stamp {
+    opacity: 0.18;
+  }
+  .arena-surface[data-bidding='true'] .table-stamp {
+    visibility: hidden;
+  }
+  .auction-console {
+    bottom: calc(var(--card-h) + 36px);
+    width: 320px;
+    padding: 4px 8px 5px;
+  }
+  .auction-title h2 {
+    font-size: 14px;
+  }
+  .auction-title {
+    margin-bottom: 3px;
+  }
+  .auction-suits button {
+    min-height: 29px;
+    padding: 2px;
+    font-size: 0.59rem;
+  }
+  .auction-modifiers button {
+    height: 21px;
+  }
+  .south-zone {
+    bottom: 12px;
+    height: calc(var(--card-h) + 19px);
+    gap: 2px;
+  }
+  .turn-token {
+    min-height: 15px;
+    height: 15px;
+    font-size: 0.57rem;
+  }
+  .dock-side > button {
+    min-height: 25px;
+    font-size: 0.66rem;
+  }
+  .station.pos-south {
+    --portrait-size: 23px;
+  }
+  .pos-south .station-name strong {
+    font-size: 0.8rem;
+  }
+  .south-pile {
+    bottom: 12px;
+  }
+  .dealer-west,
+  .dealer-east {
+    top: 59%;
+    width: 19px;
+    height: 27px;
+  }
+  .arena-trick {
+    top: 43%;
+    width: 160px;
+  }
+  .arena {
+    --table-announcement-top: 18%;
+  }
+}
