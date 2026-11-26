@@ -14,6 +14,7 @@ import { createMatch, replayGame, type GameState } from '@belot/game-engine'
 import type { LocalSession, MatchRecord } from './session'
 import type { Lang, Preferences } from './store'
 import { t } from './i18n'
+import { lessons as curriculum } from './learning/lessons'
 export type Page = 'play' | 'online' | 'learn' | 'puzzles' | 'analysis' | 'stats' | 'settings' | 'table'
 interface Props {
   lang: Lang
@@ -114,24 +115,27 @@ export function Lobby({ lang, prefs, active, records, lessons, navigate, start, 
             </span>
           </div>
           <div className="hero-actions">
-            <button className="btn hero-play" onClick={start}>
-              <Play size={16} fill="currentColor" />
-              {t(lang, ongoing ? 'resume' : 'playNow')}
-            </button>
+            <div className="hero-local-actions">
+              <button className="btn hero-play" onClick={start}>
+                <Play size={16} fill="currentColor" />
+                {t(lang, ongoing ? 'resume' : 'playNow')}
+              </button>
+              <button
+                className="hero-setup"
+                onClick={() => setup(false)}
+                title={t(lang, 'options')}
+                aria-label={t(lang, 'options')}
+                aria-haspopup="dialog"
+              >
+                <SlidersHorizontal size={19} />
+              </button>
+            </div>
             {location.protocol !== 'file:' && (
               <button className="btn secondary" onClick={() => navigate('online')}>
                 <Users size={16} />
                 {t(lang, 'online')}
               </button>
             )}
-            <button
-              className="hero-setup"
-              onClick={() => setup(false)}
-              title={t(lang, 'options')}
-              aria-label={t(lang, 'options')}
-            >
-              <SlidersHorizontal size={19} />
-            </button>
           </div>
         </div>
       </section>
@@ -213,10 +217,10 @@ export function Lobby({ lang, prefs, active, records, lessons, navigate, start, 
                 {t(lang, 'lessonsDone')}
               </span>
               <b>
-                {lessons} <small>/ 15</small>
+                {lessons} <small>/ {curriculum.length}</small>
               </b>
             </div>
-            <progress max={15} value={lessons} />
+            <progress aria-label={t(lang, 'lessonsDone')} max={curriculum.length} value={lessons} />
             <button className="text-btn" onClick={() => navigate('learn')}>
               {t(lang, lessons ? 'continueLearning' : 'startLearning')}
               <ChevronRight size={15} />

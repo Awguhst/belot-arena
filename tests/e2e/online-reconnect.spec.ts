@@ -33,7 +33,7 @@ async function enter(page: Page, name: string) {
     }
   })
   await page.goto('/#online')
-  const prompt = page.getByRole('dialog')
+  const prompt = page.getByRole('region', { name: 'Choose a nickname' })
   await prompt.getByRole('textbox', { name: 'Nickname', exact: true }).fill(name)
   await prompt.getByRole('button', { name: 'Enter lobby' }).click()
   await expect(page.getByRole('button', { name: 'Host room' })).toBeEnabled()
@@ -44,6 +44,53 @@ async function disconnect(page: Page) {
   // Dropping the real socket ensures Chromium also releases its existing upgraded connection.
   await page.evaluate(() => (window as SocketProbe).clubTestSocket!.close())
 }
+
+test('shows a room removal on the club screen the guest is browsing', async ({
+  page,
+  browser,
+  baseURL,
+}) => {
+  test.skip(process.env.BELOT_OFFLINE_TEST === '1', 'Requires the running multiplayer service')
+  const context = await browser.newContext({ baseURL })
+  const visitor = await context.newPage()
+  const title = 'Host controls ' + crypto.randomUUID().slice(0, 8)
+  try {
+    await Promise.all([enter(page, 'Elena'), enter(visitor, 'Boris')])
+    await page.getByRole('button', { name: 'Host room' }).click()
+    const form = page.getByRole('dialog')
+    await form.getByLabel('Room title').fill(title)
+    await form.getByRole('button', { name: 'Create room' }).click()
+    await visitor
+      .locator('tr[data-room-id]')
+      .filter({ hasText: title })
+      .getByRole('button', { name: 'Join', exact: true })
+      .click()
+    await expect(visitor.getByRole('heading', { name: title })).toBeVisible()
+    await visitor.getByRole('navigation').getByRole('button', { name: 'Learn', exact: true }).click()
+    await expect(visitor).toHaveURL(/#learn$/)
+    await page
+      .locator('.net-seat')
+      .filter({ hasText: 'Boris' })
+      .getByRole('button', { name: 'Manage seat' })
+      .click()
+    const controls = page.getByRole('dialog')
+    await controls.getByRole('button', { name: 'Remove player' }).click()
+    await controls.getByRole('button', { name: 'Remove from room' }).click()
+    const alert = visitor.getByRole('alert').filter({ hasText: 'The host removed you from the room.' })
+    await expect(alert).toBeVisible()
+    await expect(visitor.getByRole('button', { name: 'Return to room', exact: true })).toHaveCount(0)
+    await alert.getByRole('button', { name: 'Dismiss' }).click()
+    await visitor
+      .getByRole('navigation')
+      .getByRole('button', { name: 'Online rooms', exact: true })
+      .click()
+    await expect(visitor.getByRole('button', { name: 'Host room' })).toBeEnabled()
+    await expect(alert).toHaveCount(0)
+    await page.getByRole('button', { name: 'Leave room', exact: true }).click()
+  } finally {
+    await context.close()
+  }
+})
 
 test('recovers missed directory changes and resumes the same private seat with room assistance rules', async ({
   page,
@@ -58,6 +105,8 @@ test('recovers missed directory changes and resumes the same private seat with r
     await Promise.all([enter(page, 'Host Elena'), enter(visitor, 'Guest Boris')])
     await disconnect(visitor)
     await expect(visitor.getByRole('button', { name: 'Host room' })).toBeDisabled()
+    await expect(visitor.getByRole('status').filter({ hasText: 'Connection interrupted' })).toBeVisible()
+    await expect(visitor.getByRole('heading', { name: 'No public rooms yet' })).toHaveCount(0)
     await page.getByRole('button', { name: 'Host room' }).click()
     const host = page.getByRole('dialog')
     await host.getByLabel('Room title').fill(title)
@@ -72,6 +121,32 @@ test('recovers missed directory changes and resumes the same private seat with r
     await listing.getByRole('button', { name: 'Join', exact: true }).click()
     await visitor.getByRole('button', { name: 'Ready up' }).click()
     await expect(page.locator('.net-seat').filter({ hasText: 'Guest Boris' })).toContainText('Ready')
+    await visitor.getByRole('button', { name: 'Chat participants' }).click()
+    await visitor.getByRole('button', { name: 'Mute Host Elena' }).click()
+    await visitor.getByRole('navigation').getByRole('button', { name: 'Learn', exact: true }).click()
+    await expect(visitor).toHaveURL(/#learn$/)
+    await page.getByLabel('Message the room').fill('Waiting for you')
+    await page.getByRole('button', { name: 'Send', exact: true }).click()
+    await visitor
+      .getByRole('navigation')
+      .getByRole('button', { name: 'Online rooms', exact: true })
+      .click()
+    await expect(visitor.getByRole('button', { name: 'Cancel ready' })).toBeVisible()
+    await visitor.getByRole('button', { name: 'Chat participants' }).click()
+    await expect(visitor.getByRole('button', { name: 'Unmute Host Elena' })).toBeVisible()
+    await expect(visitor.getByText('Waiting for you', { exact: true })).toHaveCount(0)
+    await visitor.getByRole('navigation').getByRole('button', { name: 'Learn', exact: true }).click()
+    await expect(visitor).toHaveURL(/#learn$/)
+    const rejoined = visitor.waitForEvent('websocket', (socket) =>
+      socket.url().endsWith('/multiplayer/socket'),
+    )
+    await visitor.reload()
+    await rejoined
+    await expect(visitor.getByRole('button', { name: 'Return to room', exact: true })).toBeVisible()
+    await visitor.getByRole('button', { name: 'Return to room', exact: true }).click()
+    await expect(visitor.getByRole('heading', { name: title, exact: true })).toBeVisible()
+    const readyUp = visitor.getByRole('button', { name: 'Ready up', exact: true })
+    if (await readyUp.isVisible()) await readyUp.click()
     await page.getByRole('button', { name: 'Ready up' }).click()
     await page.getByRole('button', { name: 'Start match' }).click()
     const table = visitor.locator('.online-table')

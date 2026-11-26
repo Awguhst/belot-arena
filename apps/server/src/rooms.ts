@@ -591,8 +591,8 @@ export class RoomService {
         requireRoom(target && target !== g && target.room === room, 'forbidden')
         if (room.excluded.size >= 128) room.excluded.delete(room.excluded.values().next().value!)
         room.excluded.add(target.id)
-        this.removeMember(room, target, 'kick')
         this.send(target, { type: 'error', code: 'kicked' })
+        this.removeMember(room, target, 'kick')
         return
       }
       case 'room:start': {
@@ -766,6 +766,7 @@ export class RoomService {
         const g = this.guests.get(s.guestId)
         if (g?.room === room) {
           g.room = null
+          this.send(g, { type: 'error', code: 'room_missing' })
           this.send(g, { type: 'room', room: null })
           this.send(g, { type: 'game', game: null })
         }

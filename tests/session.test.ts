@@ -45,6 +45,16 @@ describe('local replay archives', () => {
     useClub.setState(original)
     vi.unstubAllGlobals()
   })
+  it('starts and archives matches when a browser on the LAN only provides getRandomValues', () => {
+    const browserRandom = crypto.getRandomValues.bind(crypto)
+    vi.stubGlobal('crypto', { getRandomValues: browserRandom })
+    const { items } = setup()
+    useClub.getState().start({ target: 51 }, 'beginner')
+    const saved = JSON.parse(items.get(key)!)
+    expect(saved.active.id).toMatch(/^[0-9a-f]{32}$/)
+    expect(items.has('belot.club.archive.' + saved.history[0].archive)).toBe(true)
+    expect(useClub.getState().warning).toBeNull()
+  })
   it('writes each archived replay once and reuses a validated record for another tab’s move', () => {
     const { storage, items, old } = setup()
     const active = useClub.getState().active!

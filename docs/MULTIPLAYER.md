@@ -4,6 +4,8 @@ Open **Online rooms** from the club or visit `/#online`. Enter a nickname, then 
 
 ## Playing together
 
+The club sidebar stays available in the room browser and waiting area. On a phone, open it with the menu button at the top of the screen. You can visit lessons or settings while seated, then select **Return to room**. **Leave room** releases your seat. A match uses the full screen for the table.
+
 The host reserves one to four human places and the remaining places are bots. Manual seat swaps support human partners or opponents. The host can change a password, move players, convert empty seats, or switch rules options before play. Changes to seats or game settings clear human readiness. Starting the next game always requires an explicit host action.
 
 Each player sees their own hand at the bottom. The score sheet identifies both partnerships by team number so players can compare the same totals from different seats. Scores and legal actions come from the server. A guest who reconnects within the grace period recovers their seat and current view. The host can choose automatic bot substitution. With substitution disabled and an unlimited turn timer, a missing player can hold up play until they return. Ownership transfers to a connected human if the host leaves.

@@ -180,19 +180,20 @@ export function Review({ lang, hands, initialId, onPlay }: ReviewProps) {
   )
   const t = (key: Key) => tr(lang, key)
   const [id, select] = useState(initialId)
-  const hand = hands.find((h) => h.id === id) ?? hands[0]
+  const newestFirst = useMemo(() => [...hands].reverse(), [hands])
+  const hand = newestFirst.find((h) => h.id === id) ?? newestFirst[0]
   return (
     <section className="rv-page">
       <div className="rv-heading">
-        <div>
+        <div className="page-intro">
           <h1 className="page-title">{t('title')}</h1>
-          <p className="page-intro">{t('intro')}</p>
+          <p>{t('intro')}</p>
         </div>
         {hand && (
           <label className="rv-pick">
             <span>{t('pick')}</span>
             <select value={hand.id} onChange={(e) => select(e.target.value)}>
-              {hands.map((h) => (
+              {newestFirst.map((h) => (
                 <option key={h.id} value={h.id}>
                   {matchDate.format(new Date(h.date))} · {t('hand')} {h.final.handNumber} ·{' '}
                   {h.final.contract && bidText(h.final.contract, lang)}

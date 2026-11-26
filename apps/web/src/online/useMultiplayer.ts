@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { randomId } from '../randomId'
 import type {
   Command,
   Guest,
@@ -11,6 +12,9 @@ import type {
 
 interface ConnectionState {
   connected: boolean
+  resumeSeat: boolean
+  retrying: boolean
+  restoringName: boolean
   guest: Guest | null
   presence: Presence | null
   rooms: RoomListing[]
@@ -20,6 +24,9 @@ interface ConnectionState {
 }
 const initial: ConnectionState = {
   connected: false,
+  resumeSeat: false,
+  retrying: false,
+  restoringName: false,
   guest: null,
   presence: null,
   rooms: [],
@@ -27,31 +34,62 @@ const initial: ConnectionState = {
   game: null,
   notice: null,
 }
-type Update = ServerEvent | { type: 'disconnected' | 'clearNotice' }
+type Update =
+  | ServerEvent
+  | { type: 'disconnected' | 'clearNotice' | 'idle' }
+  | { type: 'restoringName'; value: boolean }
 function reduce(state: ConnectionState, event: Update): ConnectionState {
   switch (event.type) {
     case 'guest':
       return {
-        ...(state.guest && state.guest.id !== event.guest.id ? initial : state),
+        ...(state.guest && state.guest.id !== event.guest.id
+          ? { ...initial, resumeSeat: state.resumeSeat || !!state.room }
+          : state),
         guest: event.guest,
-        connected: true,
       }
+    case 'idle':
+      return state.notice ? { ...initial, notice: state.notice } : initial
+    case 'restoringName':
+      return { ...state, restoringName: event.value }
     case 'disconnected':
-      return { ...state, connected: false, presence: null, rooms: [] }
+      return {
+        ...state,
+        connected: false,
+        retrying: true,
+        restoringName: false,
+        presence: null,
+        rooms: [],
+      }
     case 'directory:snapshot':
+      if (state.room) return state
       return { ...state, rooms: event.rooms, presence: event.presence }
     case 'directory:upsert':
+      if (!state.presence || state.room) return state
       return {
         ...state,
         rooms: [...state.rooms.filter((room) => room.id !== event.room.id), event.room],
       }
     case 'directory:remove':
+      if (!state.presence || state.room) return state
       return { ...state, rooms: state.rooms.filter((room) => room.id !== event.roomId) }
     case 'presence':
+      if (!state.presence || state.room) return state
       return { ...state, presence: event.presence }
     case 'room':
       return {
         ...state,
+        connected: true,
+        retrying: false,
+        // The directory is unsubscribed while seated. A fresh snapshot follows a return.
+        rooms: event.room || state.room ? [] : state.rooms,
+        presence: event.room || state.room ? null : state.presence,
+        resumeSeat: false,
+        notice:
+          event.room && event.room.id !== state.room?.id
+            ? null
+            : (state.room || state.resumeSeat) && !state.connected && !event.room
+              ? 'seat_expired'
+              : state.notice,
         room: event.room,
         game: event.room?.matchId === state.game?.matchId ? state.game : null,
       }
@@ -72,13 +110,18 @@ function rememberedName() {
     return ''
   }
 }
-function requestId() {
-  return Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) =>
-    b.toString(16).padStart(2, '0'),
-  ).join('')
+const seatKey = 'belot.online.occupied-seat'
+function initialConnection() {
+  try {
+    if (location.protocol !== 'file:' && sessionStorage.getItem(seatKey) === '1')
+      return { ...initial, resumeSeat: true }
+  } catch {
+    /* Offline and storage-limited browsers still work without a resume hint. */
+  }
+  return initial
 }
-export function useMultiplayer() {
-  const [state, dispatch] = useReducer(reduce, initial)
+export function useMultiplayer(active: boolean) {
+  const [state, dispatch] = useReducer(reduce, undefined, initialConnection)
   const socket = useRef<WebSocket | null>(null)
   const pending = useRef(
     new Map<string, { resolve: () => void; reject: (error: Error) => void; timer: number }>(),
@@ -91,7 +134,7 @@ export function useMultiplayer() {
           reject(new Error('disconnected'))
           return
         }
-        const id = requestId()
+        const id = randomId()
         const timer = window.setTimeout(() => {
           pending.current.delete(id)
           reject(new Error('timeout'))
@@ -107,10 +150,28 @@ export function useMultiplayer() {
       }),
     [],
   )
+  // Browsing another club section keeps an occupied seat connected, including across reconnects.
+  const hasSeat = !!state.room
+  const shouldConnect = active || hasSeat || state.resumeSeat
   useEffect(() => {
+    if (!state.connected) return
+    try {
+      if (hasSeat) sessionStorage.setItem(seatKey, '1')
+      else sessionStorage.removeItem(seatKey)
+    } catch {
+      /* Only the server decides whether a seat is still reserved. */
+    }
+  }, [hasSeat, state.connected])
+  useEffect(() => {
+    if (!shouldConnect) {
+      dispatch({ type: 'idle' })
+      return
+    }
     const cancel = new AbortController()
+    let handshake: AbortController | null = null
     let retry = 0,
-      attempt = 0
+      attempt = 0,
+      welcomeTimeout = 0
     function rejectPending() {
       for (const request of pending.current.values()) {
         clearTimeout(request.timer)
@@ -131,12 +192,19 @@ export function useMultiplayer() {
       try {
         // Serialize the first cookie handshake across tabs sharing this browser profile.
         const establish = async () => {
-          const response = await fetch('/api/multiplayer/session', {
-            method: 'POST',
-            credentials: 'same-origin',
-            signal: cancel.signal,
-          })
-          if (!response.ok) throw new Error('session')
+          handshake = new AbortController()
+          const deadline = window.setTimeout(() => handshake?.abort(), 12000)
+          try {
+            const response = await fetch('/api/multiplayer/session', {
+              method: 'POST',
+              credentials: 'same-origin',
+              signal: handshake.signal,
+            })
+            if (!response.ok) throw new Error('session')
+          } finally {
+            clearTimeout(deadline)
+            handshake = null
+          }
         }
         if (navigator.locks)
           await navigator.locks.request('belot.guest.cookie', { signal: cancel.signal }, establish)
@@ -148,6 +216,7 @@ export function useMultiplayer() {
         socket.current = client
         let welcomed = false
         let subscribed = false
+        welcomeTimeout = window.setTimeout(() => client.close(), 12000)
         client.onmessage = ({ data }) => {
           if (cancel.signal.aborted || socket.current !== client) return
           let event: ServerEvent
@@ -172,7 +241,9 @@ export function useMultiplayer() {
           if (event.type === 'room' && subscribed !== !event.room) {
             subscribed = !event.room
             void send({ type: subscribed ? 'directory:subscribe' : 'directory:unsubscribe' }).catch(
-              () => {},
+              () => {
+                if (socket.current === client) client.close()
+              },
             )
           }
           if (event.type === 'guest') {
@@ -184,17 +255,26 @@ export function useMultiplayer() {
               }
             }
             if (!welcomed) {
+              clearTimeout(welcomeTimeout)
               welcomed = true
               attempt = 0
               if (!event.guest.name) {
                 const name = rememberedName()
-                if (name) void send({ type: 'guest:name', name }).catch(() => {})
+                if (name) {
+                  dispatch({ type: 'restoringName', value: true })
+                  void send({ type: 'guest:name', name })
+                    .catch(() => {})
+                    .finally(() => {
+                      if (socket.current === client) dispatch({ type: 'restoringName', value: false })
+                    })
+                }
               }
             }
           }
         }
         client.onerror = () => client.close()
         client.onclose = () => {
+          clearTimeout(welcomeTimeout)
           if (socket.current === client) {
             socket.current = null
             rejectPending()
@@ -208,7 +288,9 @@ export function useMultiplayer() {
     void connect()
     return () => {
       cancel.abort()
+      handshake?.abort()
       clearTimeout(retry)
+      clearTimeout(welcomeTimeout)
       const client = socket.current
       socket.current = null
       if (client) {
@@ -219,6 +301,7 @@ export function useMultiplayer() {
       }
       rejectPending()
     }
-  }, [send])
+  }, [send, shouldConnect])
   return { ...state, send, clearNotice: () => dispatch({ type: 'clearNotice' }) }
 }
+export type Multiplayer = ReturnType<typeof useMultiplayer>

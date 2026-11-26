@@ -28,3 +28,6 @@
 .room-turn-status.offline {
   color: #f1af99;
 }
+.online-table {
+  height: 100%;
+}

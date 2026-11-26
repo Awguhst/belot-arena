@@ -1,6 +1,6 @@
 .rv-page {
   color: #f1f2ed;
-  max-width: 1400px;
+  container: replay / inline-size;
 }
 .rv-heading,
 .rv-row {
@@ -90,8 +90,16 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
+  max-width: 100%;
   color: #bfc8bf;
   font-size: 0.83rem;
+}
+.rv-controls button:hover:enabled,
+.rv-bids button:hover,
+.rv-tricks button:hover {
+  background: #303b32;
+  border-color: #79816a;
 }
 .rv-pick select {
   padding: 8px 10px;
@@ -348,7 +356,7 @@
   color: #e9cb99;
   font-weight: 650;
 }
-@media (max-width: 860px) {
+@container replay (max-width: 760px) {
   .rv-grid {
     grid-template-columns: 1fr;
     gap: 0;
@@ -357,7 +365,7 @@
     align-items: flex-start;
   }
 }
-@media (max-width: 450px) {
+@container replay (max-width: 420px) {
   .rv-felt {
     height: 250px;
   }

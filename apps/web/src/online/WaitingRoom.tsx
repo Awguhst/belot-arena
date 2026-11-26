@@ -194,70 +194,64 @@ export function WaitingRoom({ lang, guest, room, connected, send, onTable }: Pro
   const controls = connected && !request.busy
   const key = (seat: Seat) => room.seats.find((s) => s.seat === seat)!
   return (
-    <main className="net-page net-waiting">
-      <header className="net-mast">
-        <div className="net-mast-inner">
-          <div className="net-brand">
-            <img src="/spade.svg" alt="" />
-            <span>
-              Belot <em>Club</em>
-            </span>
-          </div>
-          <div className="net-mast-actions">
-            <button
-              className="net-offline"
-              disabled={!controls}
-              onClick={() => void request.run(() => send({ type: 'room:leave' }))}
-            >
-              <LogOut size={15} />
-              {ow(lang, 'leave')}
-            </button>
-            <button
-              className="net-identity"
-              disabled={!connected || room.status === 'playing'}
-              aria-label={ow(lang, 'editName')}
-              onClick={() => setDialog('name')}
-            >
-              <Monogram name={guest.name} />
-              <strong>{guest.name}</strong>
-              <Pencil size={13} />
-            </button>
-          </div>
-        </div>
-      </header>
+    <section className="net-page net-waiting" aria-labelledby="room-heading">
       <div className="net-main">
         <header className="net-room-heading">
-          <div>
+          <div className="net-room-access">
             <Status status={room.status} lang={lang} />
-            <div className="net-room-name">
-              <h1>{room.title}</h1>
-              {room.locked && <LockKeyhole size={21} role="img" aria-label={ow(lang, 'locked')} />}
+            <div className="net-account-actions">
+              <button
+                className="net-offline"
+                disabled={!controls}
+                onClick={() => void request.run(() => send({ type: 'room:leave' }))}
+              >
+                <LogOut size={15} />
+                {ow(lang, 'leave')}
+              </button>
+              <button
+                className="net-identity"
+                disabled={!connected || room.status === 'playing'}
+                aria-label={ow(lang, 'editName')}
+                onClick={() => setDialog('name')}
+              >
+                <Monogram name={guest.name} />
+                <strong>{guest.name}</strong>
+                <Pencil size={13} />
+              </button>
             </div>
-            <p className="net-owner">
-              <Crown size={14} />
-              {ow(lang, 'host')} · {room.hostName}
-            </p>
           </div>
-          {host && waiting && (
-            <div className="net-room-controls">
-              <button
-                className="net-secondary"
-                disabled={!controls}
-                onClick={() => setDialog('settings')}
-              >
-                <Settings2 size={16} />
-                {ow(lang, 'settings')}
-              </button>
-              <button
-                className="net-secondary"
-                disabled={!controls}
-                onClick={() => setDialog('password')}
-              >
-                <LockKeyhole size={15} />
-                {ow(lang, 'password')}
-              </button>
+          <div className="net-room-summary">
+            <div className="net-room-titles">
+              <div className="net-room-name">
+                <h1 id="room-heading">{room.title}</h1>
+                {room.locked && <LockKeyhole size={21} role="img" aria-label={ow(lang, 'locked')} />}
+              </div>
+              <p className="net-owner">
+                <Crown size={14} />
+                {ow(lang, 'host')} · {room.hostName}
+              </p>
             </div>
-          )}
+            {host && waiting && (
+              <div className="net-room-controls">
+                <button
+                  className="net-secondary"
+                  disabled={!controls}
+                  onClick={() => setDialog('settings')}
+                >
+                  <Settings2 size={16} />
+                  {ow(lang, 'settings')}
+                </button>
+                <button
+                  className="net-secondary"
+                  disabled={!controls}
+                  onClick={() => setDialog('password')}
+                >
+                  <LockKeyhole size={15} />
+                  {ow(lang, 'password')}
+                </button>
+              </div>
+            )}
+          </div>
         </header>
         {room.settings.description && <p className="net-description">{room.settings.description}</p>}
         {!connected && (
@@ -553,6 +547,6 @@ export function WaitingRoom({ lang, guest, room, connected, send, onTable }: Pro
           close={() => setManaged(null)}
         />
       )}
-    </main>
+    </section>
   )
 }

@@ -6,6 +6,18 @@ import { t } from '../i18n'
 import { ErrorNotice, useRequest, type Send } from './ui'
 import { ow, seatWord } from './words'
 
+const mutedKey = 'belot.online.muted'
+function readMuted() {
+  try {
+    const saved: unknown = JSON.parse(sessionStorage.getItem(mutedKey) ?? '[]')
+    return new Set<string>(
+      Array.isArray(saved) ? saved.filter((id) => typeof id === 'string').slice(-256) : [],
+    )
+  } catch {
+    return new Set<string>()
+  }
+}
+
 function systemText(lang: Lang, m: ChatEntry) {
   const name = m.name || '',
     bg = lang === 'bg'
@@ -72,7 +84,7 @@ export function RoomChat({
 }) {
   const [open, setOpen] = useState(true),
     [people, setPeople] = useState(false)
-  const [muted, setMuted] = useState<Set<string>>(() => new Set())
+  const [muted, setMuted] = useState(readMuted)
   const input = useRef<HTMLInputElement>(null),
     log = useRef<HTMLUListElement>(null),
     follow = useRef(true)
@@ -94,6 +106,18 @@ export function RoomChat({
         follow.current = true
       },
     )
+  }
+  function toggleMute(id: string) {
+    const next = new Set(muted)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    const retained = [...next].slice(-256)
+    setMuted(new Set(retained))
+    try {
+      sessionStorage.setItem(mutedKey, JSON.stringify(retained))
+    } catch {
+      /* The mute still applies to the current waiting room. */
+    }
   }
   return (
     <section className="net-chat" aria-label={ow(lang, 'chat')}>
@@ -117,21 +141,14 @@ export function RoomChat({
       </div>
       {open && (
         <>
-          {people && (
+          {people && participants.length > 0 && (
             <div className="net-chat-people">
               {participants.map((s) => (
                 <button
                   key={s.guestId}
                   className="net-mini"
                   aria-pressed={muted.has(s.guestId!)}
-                  onClick={() =>
-                    setMuted((prev) => {
-                      const ids = new Set(prev)
-                      if (ids.has(s.guestId!)) ids.delete(s.guestId!)
-                      else ids.add(s.guestId!)
-                      return ids
-                    })
-                  }
+                  onClick={() => toggleMute(s.guestId!)}
                 >
                   {muted.has(s.guestId!) ? <VolumeX size={13} /> : <Volume2 size={13} />}{' '}
                   {ow(lang, muted.has(s.guestId!) ? 'unmute' : 'mute')} {s.name}
@@ -177,6 +194,7 @@ export function RoomChat({
               aria-label={ow(lang, 'say')}
               placeholder={ow(lang, 'say')}
               required
+              pattern=".*\S.*"
               disabled={!connected}
             />
             <button

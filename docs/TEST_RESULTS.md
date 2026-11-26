@@ -1,6 +1,14 @@
 # Verification report
 
-Verified on 25 November 2026 on Windows, using Node.js 24.14.1, pnpm 11.25.0 and desktop Chromium. The lockfile records the dependency versions.
+## Lobby and navigation audit · 26 November 2026
+
+The production build passed strict TypeScript, 160 unit tests and 36 Playwright scenarios. The standalone HTML edition also passed its offline browser check. Independent guests completed public, password-protected and four-human games, compared scores and started rematches. Navigation checks verified that a ready seat and the sidebar survive visits to other sections, that browser Back returns to the waiting room, and that directory filters survive leaving a room.
+
+The room browser and waiting area were checked at 15 widths from 320 to 1920 pixels. Tests used maximum-length Cyrillic room names and confirmed the Join control stayed visible and clickable. Six offline screens were also inspected at five widths. Keyboard checks covered opening and closing the mobile drawer, trapping and restoring focus, resizing with the drawer open and advancing to the next lesson. Phone and tablet checks used Chromium emulation.
+
+## Previous release · 25 November 2026
+
+Verified on Windows using Node.js 24.14.1, pnpm 11.25.0 and desktop Chromium. The lockfile records the dependency versions.
 
 ## Build and automated checks
 

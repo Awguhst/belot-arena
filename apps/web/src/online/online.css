@@ -1,32 +1,16 @@
 .net-page {
   --net-border: #3a463c;
-  --net-gold: #e2c38a;
+  --net-gold: var(--gold);
   --net-muted: #a8b6aa;
-  min-height: 100vh;
-  min-height: 100dvh;
-  color: #eceee6;
-  background: radial-gradient(ellipse at 80% 0%, #23362b70, transparent 55%), #111713;
-  padding-bottom: env(safe-area-inset-bottom);
+  container: room-lobby / inline-size;
+  width: 100%;
+  min-width: 0;
+  color: var(--cream);
 }
-.net-mast {
-  border-bottom: 1px solid #354338;
-  background: #19231c;
-}
-.net-mast-inner,
 .net-main {
-  max-width: 1230px;
-  margin: auto;
+  min-width: 0;
 }
-.net-mast-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 66px;
-  padding: 0 clamp(16px, 4vw, 56px);
-}
-.net-mast-actions,
-.net-brand,
+.net-account-actions,
 .net-identity,
 .net-offline,
 .net-secondary,
@@ -41,37 +25,34 @@
   display: inline-flex;
   align-items: center;
 }
-.net-brand {
-  gap: 10px;
-  padding: 0;
-  font: 1.65rem var(--serif);
-  color: #f1e6ce;
-  white-space: nowrap;
-  letter-spacing: -0.06em;
-}
-.net-brand img {
-  width: 35px;
-  height: 35px;
-}
-.net-brand em {
-  color: #dfc087;
-}
-.net-mast-actions {
-  gap: 18px;
+.net-account-actions {
+  gap: 12px;
+  margin-inline-start: auto;
+  min-width: 0;
+  max-width: 100%;
 }
 .net-offline,
 .net-identity {
-  gap: 8px;
-  color: #c5d0c3;
-  font-size: 0.85rem;
+  gap: 7px;
+  min-width: 0;
+  min-height: 38px;
+  color: #d0dbcc;
+  font-size: 0.84rem;
+  line-height: 1.3;
 }
 .net-offline:hover,
 .net-identity:hover {
   color: var(--net-gold);
 }
 .net-identity {
-  padding: 0 0 0 17px;
+  padding: 0 0 0 12px;
   border-left: 1px solid var(--net-border);
+}
+.net-identity strong {
+  max-width: clamp(72px, 15cqi, 200px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .net-identity strong,
 .net-occupant strong,
@@ -117,9 +98,6 @@
   color: #efd391;
   fill: #6b5232;
 }
-.net-main {
-  padding: clamp(20px, 3.6vw, 46px) clamp(16px, 4vw, 56px) 60px;
-}
 .net-banner {
   overflow: hidden;
   border: 1px solid #526548;
@@ -138,15 +116,15 @@
   box-shadow: 0 12px 30px #08130d36;
 }
 .net-page-heading {
-  padding: clamp(22px, 3vw, 37px);
+  padding: clamp(22px, 3.2cqi, 40px);
   display: flex;
   align-items: flex-start;
   gap: 18px;
   flex-direction: column;
 }
 .net-page h1 {
-  font: 400 clamp(2.25rem, 4.45vw, 4.1rem)/1.02 var(--serif);
-  letter-spacing: -0.052em;
+  font: 400 clamp(2.25rem, 4.8cqi, 3.6rem)/1.1 var(--serif);
+  letter-spacing: -0.043em;
   color: #fff5dc;
   margin: 0;
 }
@@ -155,14 +133,22 @@
   padding: 8px 17px;
   border-color: #eed09a;
 }
-.net-presence {
+.net-banner-foot {
   display: flex;
   align-items: center;
-  gap: clamp(15px, 4%, 42px);
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 16px;
   border-top: 1px solid #afad7670;
   background: #0a1d15d9;
+  padding: 7px clamp(15px, 3.2cqi, 40px);
+}
+.net-presence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px clamp(14px, 2cqi, 28px);
   margin: 0;
-  padding: 13px clamp(18px, 3vw, 37px);
 }
 .net-presence > div {
   display: flex;
@@ -194,7 +180,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 15px;
+  padding: clamp(12px, 1.5cqi, 18px);
   border-bottom: 1px solid var(--net-border);
 }
 .net-search,
@@ -210,8 +196,9 @@
   border-radius: 5px;
 }
 .net-search {
-  height: 39px;
+  height: 40px;
   flex: 1;
+  min-width: 0;
   max-width: 460px;
   display: flex;
   align-items: center;
@@ -243,10 +230,10 @@
 .net-secondary,
 .net-shuffle,
 .net-sort {
-  min-height: 37px;
+  min-height: 40px;
   padding: 7px 11px;
   gap: 7px;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
 }
 .net-secondary:hover:not(:disabled),
 .net-mini:hover:not(:disabled),
@@ -329,7 +316,7 @@
 }
 .net-room-list th {
   color: #aebdab;
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   letter-spacing: 0.085em;
   text-transform: uppercase;
   text-align: left;
@@ -358,7 +345,13 @@
 }
 .net-room-title {
   gap: 11px;
-  max-width: clamp(160px, 31vw, 430px);
+  width: 100%;
+  max-width: min(32cqi, 430px);
+  min-width: 0;
+}
+.net-room-title > div {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 .net-room-mark {
   height: 35px;
@@ -376,23 +369,35 @@
   display: block;
 }
 .net-room-title strong {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   color: #f1efde;
   font: 0.99rem var(--serif);
   line-height: 1.25;
 }
+.net-room-label {
+  display: -webkit-box;
+  min-width: 0;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
 .net-room-title small,
 .net-table-value small {
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   color: var(--net-muted);
 }
 .net-room-title small {
   margin-top: 3px;
-  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .net-lock {
   color: #ccae77;
   vertical-align: baseline;
-  margin-left: 6px;
 }
 .net-table-value {
   gap: 4px;
@@ -469,7 +474,7 @@
   justify-content: center;
   flex-direction: column;
   text-align: center;
-  padding: clamp(34px, 6vw, 74px) 18px;
+  padding: clamp(34px, 6cqi, 74px) 18px;
   gap: 8px;
   color: var(--net-muted);
 }
@@ -487,7 +492,7 @@
 .net-empty h2,
 .net-chat h2,
 .net-seating h2 {
-  font: 400 clamp(1.1rem, 1.65vw, 1.45rem) var(--serif);
+  font: 400 clamp(1.15rem, 2.1cqi, 1.45rem)/1.25 var(--serif);
   color: #eee9d7;
 }
 .net-empty p {
@@ -516,6 +521,39 @@
 .net-form {
   display: grid;
   gap: 13px;
+}
+.net-nickname-entry {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  padding: clamp(15px, 2cqi, 24px);
+  border: 1px solid #617051;
+  border-radius: 11px;
+  background: #202b22;
+}
+.net-nickname-entry h2 {
+  flex: 1 1 12rem;
+  font: 400 clamp(1.1rem, 2.1cqi, 1.4rem)/1.25 var(--serif);
+}
+.net-nickname-entry form {
+  flex: 1 1 20rem;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px;
+}
+.net-nickname-entry .net-field {
+  flex: 1 1 10rem;
+}
+.net-nickname-entry .net-field input,
+.net-nickname-entry .btn {
+  min-height: 40px;
+}
+.net-nickname-entry .net-error {
+  flex-basis: 100%;
 }
 .net-form-note {
   color: #b7c4b3;
@@ -607,6 +645,22 @@
   vertical-align: -3px;
   margin-right: 5px;
 }
+.net-fixed-rule {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 11px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #ccd6c8;
+}
+.net-fixed-rule dd {
+  margin: 0;
+  font-weight: 550;
+  color: #ece9d8;
+}
 .net-options[open] > .net-field,
 .net-options[open] > .net-form-row,
 .net-options[open] > .net-check {
@@ -620,6 +674,8 @@
   width: 510px;
 }
 .net-room-heading,
+.net-room-access,
+.net-room-summary,
 .net-room-controls,
 .net-owner,
 .net-setting-strip,
@@ -637,12 +693,23 @@
   align-items: center;
 }
 .net-room-heading {
+  display: grid;
+  gap: 8px;
+}
+.net-room-access,
+.net-room-summary {
+  align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 8px 16px;
   flex-wrap: wrap;
 }
+.net-room-titles {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
 .net-room-heading h1 {
-  margin: 9px 0 7px;
+  margin: 0 0 7px;
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 .net-room-name {
@@ -677,8 +744,8 @@
 .net-room-body {
   margin-top: 22px;
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(245px, 0.9fr);
-  gap: 15px;
+  grid-template-columns: minmax(0, 1.65fr) minmax(16rem, 1fr);
+  gap: clamp(14px, 1.6cqi, 22px);
   align-items: start;
 }
 .net-seating,
@@ -705,7 +772,7 @@
   min-height: 31px;
 }
 .net-teams {
-  padding: 15px clamp(13px, 3vw, 28px);
+  padding: 15px clamp(13px, 2cqi, 28px);
   display: grid;
   gap: 14px;
   background:
@@ -728,7 +795,7 @@
 }
 .net-seat-pair {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 .net-seat {
@@ -937,6 +1004,10 @@
   margin-bottom: 8px;
   overflow-wrap: anywhere;
 }
+.net-chat-log li > * {
+  min-width: 0;
+  max-width: 100%;
+}
 .net-chat-log strong {
   color: #ddc48e;
 }
@@ -985,20 +1056,12 @@
 .net-chat .net-error {
   margin: 7px;
 }
-@media (min-width: 1500px) {
-  .net-main {
-    padding-top: 60px;
-  }
-  .net-page-heading {
-    padding: 40px;
-  }
-}
-@media (max-width: 840px) {
+@container room-lobby (max-width: 900px) {
   .net-room-body {
-    grid-template-columns: minmax(0, 1.45fr) minmax(195px, 0.85fr);
+    grid-template-columns: minmax(0, 1.5fr) minmax(225px, 0.85fr);
   }
   .net-room-title {
-    max-width: 235px;
+    max-width: min(30cqi, 235px);
   }
   .net-room-list td,
   .net-room-list th {
@@ -1006,30 +1069,15 @@
   }
   .net-table-value small {
     display: block;
-    font-size: 0.67rem;
+    font-size: 0.74rem;
   }
   .net-search {
     max-width: none;
   }
 }
-@media (max-width: 700px) {
-  .net-main {
-    padding: 17px 12px 34px;
-  }
-  .net-mast-inner {
-    min-height: 53px;
-    padding-inline: 13px;
-  }
-  .net-brand {
-    font-size: 1.28rem;
-    gap: 6px;
-  }
-  .net-brand img {
-    width: 28px;
-    height: 28px;
-  }
-  .net-mast-actions {
-    gap: 9px;
+@container room-lobby (max-width: 710px) {
+  .net-account-actions {
+    gap: 8px;
   }
   .net-identity {
     padding-left: 8px;
@@ -1039,15 +1087,9 @@
     height: 23px;
     font-size: 0.8rem;
   }
-  .net-identity strong {
-    max-width: 18vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
   .net-offline,
   .net-identity {
-    font-size: 0.73rem;
+    font-size: 0.8rem;
     gap: 4px;
   }
   .net-page-heading {
@@ -1055,11 +1097,11 @@
     gap: 13px;
   }
   .net-page h1 {
-    font-size: clamp(2.1rem, 7vw, 2.9rem);
+    font-size: clamp(2rem, 7.5cqi, 2.85rem);
   }
   .net-host {
-    font-size: 0.82rem;
-    min-height: 34px;
+    font-size: 0.87rem;
+    min-height: 40px;
     padding: 6px 12px;
   }
   .net-banner {
@@ -1070,10 +1112,12 @@
       center,
       right 40%;
   }
+  .net-banner-foot {
+    padding: 5px 15px;
+  }
   .net-presence {
-    padding: 9px 12px;
-    justify-content: space-between;
-    gap: 8px;
+    flex: 1 1 14rem;
+    gap: 8px 14px;
   }
   .net-presence > div {
     display: grid;
@@ -1083,7 +1127,7 @@
   }
   .net-presence dt {
     grid-column: span 2;
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     line-height: 1.2;
   }
   .net-presence dd {
@@ -1098,27 +1142,32 @@
   }
   .net-tools {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr);
     gap: 7px;
     padding: 10px;
   }
   .net-search {
     grid-column: 1 / -1;
     width: 100%;
-    height: 35px;
-    font-size: 0.82rem;
+    height: 40px;
+    font-size: 0.94rem;
   }
   .net-filter-button {
     justify-self: start;
   }
   .net-sort,
   .net-filter-button {
-    min-height: 30px;
-    font-size: 0.75rem;
+    min-height: 38px;
+    font-size: 0.82rem;
+  }
+  .net-sort {
+    justify-self: end;
+    max-width: 100%;
   }
   .net-sort select {
-    min-height: 29px;
-    max-width: 145px;
+    min-width: 0;
+    min-height: 36px;
+    max-width: min(145px, 100%);
   }
   .net-room-list,
   .net-room-list tbody {
@@ -1133,7 +1182,7 @@
   }
   .net-room-list tbody tr {
     display: grid;
-    grid-template-columns: auto auto 1fr auto;
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.5fr) minmax(0, 0.7fr) auto;
     grid-template-areas: 'title title title status' 'humans bots points join';
     gap: 8px 9px;
     padding: 12px;
@@ -1145,6 +1194,7 @@
   .net-room-list td,
   .net-room-list td:first-child,
   .net-room-list td:last-child {
+    min-width: 0;
     border: 0;
     padding: 0;
     align-self: center;
@@ -1154,11 +1204,11 @@
     max-width: none;
   }
   .net-room-title strong {
-    font-size: 0.92rem;
+    font-size: 1rem;
   }
   .net-room-title small,
   .net-table-value small {
-    font-size: 0.67rem;
+    font-size: 0.74rem;
   }
   .net-room-mark {
     width: 28px;
@@ -1195,14 +1245,14 @@
     margin: 0;
   }
   .net-status {
-    font-size: 0.61rem;
-    padding: 3px 6px;
+    font-size: 0.71rem;
+    padding: 3px 7px;
     gap: 4px;
   }
   .net-join {
-    font-size: 0.73rem;
-    min-height: 29px;
-    padding: 4px 8px;
+    font-size: 0.8rem;
+    min-height: 36px;
+    padding: 6px 10px;
   }
   .net-filters {
     padding: 10px;
@@ -1220,15 +1270,15 @@
     margin-top: 14px;
   }
   .net-room-heading {
-    gap: 10px;
+    gap: 7px;
   }
   .net-room-heading h1 {
-    margin: 6px 0 3px;
+    margin: 0 0 5px;
   }
   .net-room-controls .net-secondary {
-    min-height: 29px;
-    padding: 5px 8px;
-    font-size: 0.74rem;
+    min-height: 36px;
+    padding: 6px 10px;
+    font-size: 0.82rem;
   }
   .net-seating-head,
   .net-chat-head {
@@ -1245,14 +1295,11 @@
   .net-seat-pair {
     gap: 7px;
   }
-  .net-seat-top {
-    min-height: 20px;
-  }
   .net-occupant {
     gap: 5px;
   }
   .net-occupant strong {
-    font-size: 0.8rem;
+    font-size: 0.87rem;
   }
   .net-occupant .net-avatar,
   .net-vacancy,
@@ -1265,29 +1312,89 @@
     max-height: 220px;
   }
 }
-@media (max-width: 375px) {
-  .net-mast-actions {
-    gap: 5px;
+@container room-lobby (max-width: 520px) {
+  .net-banner-foot {
+    display: block;
   }
-  .net-mast-inner {
-    padding-inline: 9px;
+  .net-banner-foot .net-account-actions {
+    display: flex;
+    justify-content: space-between;
   }
-  .net-identity .net-avatar {
+  .net-presence {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-block: 8px 10px;
+    border-bottom: 1px solid #afad7638;
+  }
+  .net-banner-foot .net-identity {
+    border: none;
+  }
+  .net-room-summary {
+    align-items: flex-start;
+  }
+  .net-room-controls {
+    flex-basis: 100%;
+  }
+}
+@container room-lobby (max-width: 410px) {
+  .net-room-list tbody tr {
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.55fr) minmax(0, 0.8fr);
+    grid-template-areas: 'title title title' 'humans bots points' 'status status join';
+    gap: 8px 12px;
+    padding: 10px;
+  }
+  .net-status-cell {
+    justify-self: start;
+  }
+  .net-join-cell {
+    justify-self: end;
+  }
+  .net-table-value {
+    flex-wrap: wrap;
+  }
+  .net-bots-cell .net-table-value {
+    row-gap: 0;
+  }
+  .net-nickname-entry .btn {
+    flex: 1 1 auto;
+  }
+}
+@container room-lobby (max-width: 335px) {
+  .net-sort > svg {
     display: none;
   }
-  .net-presence dt {
-    font-size: 0.6rem;
+}
+@media (max-width: 600px) {
+  .net-search input,
+  .net-field input,
+  .net-field select,
+  .net-chat form input {
+    font-size: 1rem;
   }
-  .net-room-list tbody tr {
-    gap: 6px;
+  .net-icon-action {
+    min-width: 32px;
+    min-height: 32px;
   }
-  .net-table-value small {
-    font-size: 0.61rem;
+}
+@media (max-width: 420px) {
+  .net-options .net-form-row {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .net-check {
-    font-size: 0.78rem;
+  .net-preview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .net-field {
-    font-size: 0.78rem;
+  .net-preview > div {
+    grid-template-columns: 18px minmax(0, 1fr);
+    align-items: center;
+    justify-items: start;
+    gap: 2px 7px;
+    padding: 8px;
+    text-align: left;
+  }
+  .net-preview svg {
+    grid-row: span 2;
+  }
+  .net-preview small {
+    font-size: 0.7rem;
   }
 }

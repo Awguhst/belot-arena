@@ -102,6 +102,7 @@ describe('public directory and guests', () => {
     await vi.advanceTimersByTimeAsync(125)
     expect(watch.last('directory:remove').roomId).toBe(roomId)
     expect(a.room()).toBe(null)
+    expect(a.last('error').code).toBe('room_missing')
     expect(await make(b)).toBe('ack')
   })
   it('counts sessions across tabs and sends incremental listings, reservations and removals', async () => {

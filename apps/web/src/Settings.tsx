@@ -18,6 +18,7 @@ export function Modal({
   children: ReactNode
 }) {
   const ref = useRef<HTMLDialogElement>(null)
+  const lang = useClub((state) => state.prefs.lang)
   useEffect(() => {
     const dialog = ref.current!
     dialog.showModal()
@@ -36,7 +37,7 @@ export function Modal({
       <div className="modal-inner">
         <div className="section-head">
           <h2>{label}</h2>
-          <button className="icon-button" aria-label={label + ' ×'} onClick={close}>
+          <button type="button" className="icon-button" aria-label={t(lang, 'close')} onClick={close}>
             <X size={20} />
           </button>
         </div>
@@ -62,6 +63,7 @@ function SelectField<V extends string | number>({
     <label className="field">
       <span>{label}</span>
       <select
+        aria-label={label}
         value={value}
         onChange={(e) => onChange(values.find((entry) => String(entry) === e.target.value)!)}
       >

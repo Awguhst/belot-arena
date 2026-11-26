@@ -10,6 +10,28 @@ import { expect, test } from './fixture'
 
 test.use({ hasTouch: true })
 
+test('keeps the Bulgarian lounge actions and settings fields within a narrow phone', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 740 })
+  await page.goto('/#play')
+  const hero = page.locator('.hero')
+  await expect(hero.getByRole('button', { name: 'Опции за игра' })).toBeVisible()
+  const inside = await hero.evaluate((element) => {
+    const card = element.getBoundingClientRect()
+    return [...element.querySelectorAll('button')].every((button) => {
+      const rect = button.getBoundingClientRect()
+      return rect.left >= card.left && rect.right <= card.right && rect.bottom <= card.bottom
+    })
+  })
+  expect(inside).toBe(true)
+  await hero.getByRole('button', { name: 'Опции за игра' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Затвори', exact: true }).click()
+  await page.goto('/#settings')
+  await expect(page.getByRole('heading', { name: 'Настройки', exact: true })).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320)
+})
+
 function firstTrick() {
   const seed = 1
   const config = { dealer: 'south', practiceContract: 'hearts' } as const

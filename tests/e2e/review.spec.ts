@@ -93,3 +93,11 @@ test('keeps the replay and score accessible on a portrait phone', async ({ page 
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth))
     .toBeLessThanOrEqual(360)
 })
+
+test('recovers from an empty statistics filter without losing the saved hand', async ({ page }) => {
+  await page.goto('/#stats')
+  await page.getByRole('button', { name: 'Assisted', exact: true }).click()
+  await expect(page.getByText('No completed hands match this filter.')).toBeVisible()
+  await page.getByRole('button', { name: 'Show all results' }).click()
+  await expect(page.locator('.stat-history tbody tr')).toHaveCount(1)
+})

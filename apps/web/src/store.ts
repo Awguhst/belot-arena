@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { GameAction, MatchConfig } from '@belot/game-engine'
 import type { Difficulty } from '@belot/bots'
 import { LocalSession, type MatchRecord } from './session'
+import { randomId } from './randomId'
 
 export type Lang = 'bg' | 'en'
 export type AssistanceMode = 'learning' | 'standard' | 'expert'
@@ -211,7 +212,7 @@ function saveLocal({ active, history, prefs }: Pick<ClubState, 'active' | 'histo
     const entries = history.map((record) => {
       const reused = archiveRef.get(record)
       if (reused) return reused
-      const ref = { id: record.id, archive: crypto.randomUUID() }
+      const ref = { id: record.id, archive: randomId() }
       localStorage.setItem(archivePrefix + ref.archive, JSON.stringify(record))
       staged.push({ record, ref })
       return ref

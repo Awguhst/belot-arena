@@ -30,9 +30,9 @@ async function enter(browser: Browser, baseURL: string, name: string): Promise<P
   await page.goto('/')
   await page.getByRole('combobox', { name: 'Език', exact: true }).selectOption('en')
   await page.getByRole('navigation').getByRole('button', { name: 'Online rooms', exact: true }).click()
-  const dialog = page.getByRole('dialog', { name: 'Choose a nickname' })
-  await dialog.getByRole('textbox', { name: 'Nickname', exact: true }).fill(name)
-  await dialog.getByRole('button', { name: 'Enter lobby', exact: true }).click()
+  const nickname = page.getByRole('region', { name: 'Choose a nickname' })
+  await nickname.getByRole('textbox', { name: 'Nickname', exact: true }).fill(name)
+  await nickname.getByRole('button', { name: 'Enter lobby', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Host room', exact: true })).toBeEnabled()
   return player
 }
@@ -147,8 +147,7 @@ for (const scenario of [
             const prompt = p.page.getByRole('dialog')
             await prompt.getByLabel('Room password').fill('wrong')
             await prompt.getByRole('button', { name: 'Join', exact: true }).click()
-            await expect(p.page.getByRole('alert')).toBeVisible()
-            await listing.getByRole('button', { name: 'Join', exact: true }).click()
+            await expect(prompt.getByRole('alert')).toHaveText('Incorrect room password.')
             await prompt.getByLabel('Room password').fill('night-club-17')
             await prompt.getByRole('button', { name: 'Join', exact: true }).click()
           }
@@ -228,6 +227,9 @@ for (const scenario of [
           await expect(player.page.getByRole('button', { name: 'Host room', exact: true })).toBeEnabled()
         }
         if (observedRoom) await expect(observedRoom).toHaveCount(0)
+        await expect(search).toHaveValue('Guest 1')
+        if (scenario.locked)
+          await expect(players[1].page.getByLabel('No password', { exact: true })).toBeVisible()
       } finally {
         await observer?.context.close()
         await Promise.all(players.map((p) => p.context.close()))

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Bot, Crown, DoorOpen, Flag, LockKeyhole, Settings2, UserRound, Users } from 'lucide-react'
-import { RULESET, type Seat } from '@belot/game-engine'
+import { RULESET, SEATS } from '@belot/game-engine'
 import {
   defaultRoomSettings,
   type RoomSettings,
@@ -9,12 +9,11 @@ import {
 import { Modal } from '../Settings'
 import { t } from '../i18n'
 import type { Lang } from '../store'
-import { onlineError, ErrorNotice, useRequest, type Send } from './ui'
+import { ErrorNotice, useRequest, type Send } from './ui'
 import { ow, seatWord } from './words'
 
 const prefKey = 'belot.online.room-settings'
 const levels = ['beginner', 'intermediate', 'advanced'] as const
-const seatOrder: Seat[] = ['south', 'east', 'north', 'west']
 function readPreferences(): RoomSettings {
   const settings = { ...defaultRoomSettings }
   try {
@@ -51,6 +50,7 @@ export function RoomForm({ lang, name, room, connected, send, close }: Props) {
   const changed = room && JSON.stringify(original) !== JSON.stringify(room.settings)
   const request = useRequest(lang)
   const reserved = room?.seats.filter((s) => s.kind === 'human').length ?? 1
+  const capacity = Math.max(settings.humanCapacity, reserved)
   function update<K extends keyof RoomSettings>(key: K, value: RoomSettings[K]) {
     setSettings((previous) => ({ ...previous, [key]: value }))
   }
@@ -58,17 +58,18 @@ export function RoomForm({ lang, name, room, connected, send, close }: Props) {
     e.preventDefault()
     const clean = {
       ...settings,
+      humanCapacity: capacity,
       title: settings.title.trim(),
       description: settings.description.trim(),
       ruleset: RULESET,
     }
     if (!clean.title) {
-      request.setError(onlineError(lang, 'invalid'))
+      request.setError('invalid')
       return
     }
     const pwd = String(new FormData(e.currentTarget).get('password') ?? '')
     if (new TextEncoder().encode(pwd).length > 128) {
-      request.setError(onlineError(lang, 'invalid'))
+      request.setError('invalid')
       return
     }
     void request.run(
@@ -117,7 +118,7 @@ export function RoomForm({ lang, name, room, connected, send, close }: Props) {
             </span>
             <select
               aria-label={ow(lang, 'capacity')}
-              value={settings.humanCapacity}
+              value={capacity}
               onChange={(e) => update('humanCapacity', +e.target.value)}
             >
               {[1, 2, 3, 4].map((n) => (
@@ -147,7 +148,7 @@ export function RoomForm({ lang, name, room, connected, send, close }: Props) {
         </div>
         {!room && (
           <div className="net-preview" role="group" aria-label={ow(lang, 'seatMap')}>
-            {seatOrder.map((seat, i) => {
+            {SEATS.map((seat, i) => {
               const Icon = i === 0 ? Crown : i >= settings.humanCapacity ? Bot : UserRound
               return (
                 <div
@@ -213,12 +214,10 @@ export function RoomForm({ lang, name, room, connected, send, close }: Props) {
             <Settings2 size={16} />
             {ow(lang, 'options')}
           </summary>
-          <label className="net-field">
-            <span>{ow(lang, 'rules')}</span>
-            <select aria-label={ow(lang, 'rules')} value={settings.ruleset} disabled>
-              <option value={RULESET}>{ow(lang, 'classic')}</option>
-            </select>
-          </label>
+          <dl className="net-fixed-rule">
+            <dt>{ow(lang, 'rules')}</dt>
+            <dd>{ow(lang, 'classic')}</dd>
+          </dl>
           <div className="net-form-row">
             <label className="net-field">
               <span>{ow(lang, 'teamAssignment')}</span>

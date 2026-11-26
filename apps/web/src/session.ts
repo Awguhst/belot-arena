@@ -12,6 +12,7 @@ import {
   type Seat,
 } from '@belot/game-engine'
 import type { Difficulty } from '@belot/bots'
+import { randomId } from './randomId'
 
 export interface MatchRecord extends Replay {
   id: string
@@ -54,7 +55,7 @@ export class LocalSession implements GameSession {
         difficulty,
         assisted,
         hints: 0,
-        id: crypto.randomUUID(),
+        id: randomId(),
         date: new Date().toISOString(),
       },
       state,

@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import {
   ArrowRight,
   BookOpen,
@@ -19,7 +19,7 @@ import { solvePuzzle } from './grade'
 import { cardFromCode, cardKey, contractName, glyph, seatName } from './model'
 import type { Difficulty, Language, Puzzle, StudyState } from './model'
 import { categoryNames, difficultyNames, ui } from './labels'
-import { learningStorageKey, readLearningProgress, recordStudyAnswer } from './progress'
+import { recordStudyAnswer } from './progress'
 import type { LearningProgress, StudySection } from './progress'
 import './learning.css'
 
@@ -27,7 +27,8 @@ export interface LearningScreenProps {
   section: StudySection
   lang: Language
   initialId?: string
-  onProgressChange?: (progress: LearningProgress) => void
+  progress: LearningProgress
+  onProgressChange: (progress: LearningProgress) => void
 }
 function bidLabel(bid: Bid, lang: Language): string {
   if (bid === 'pass') return ui.pass[lang]
@@ -251,14 +252,14 @@ function Exercise({
         )}
       </div>
       {feedback === 'correct' ? (
-        <button type="button" className="study-primary" onClick={onNext}>
+        <button type="button" className="btn study-primary" onClick={onNext}>
           {actionLabel}
           <ArrowRight size={16} />
         </button>
       ) : (
         <button
           type="button"
-          className="study-primary"
+          className="btn study-primary"
           disabled={!selected || feedback === 'wrong'}
           onClick={check}
         >
@@ -274,8 +275,7 @@ function Exercise({
 export function LearningScreen(props: LearningScreenProps) {
   return <LearningContent key={props.section + '/' + (props.initialId ?? '')} {...props} />
 }
-function LearningContent({ section, lang, initialId, onProgressChange }: LearningScreenProps) {
-  const [progress, setProgress] = useState(readLearningProgress)
+function LearningContent({ section, lang, initialId, progress, onProgressChange }: LearningScreenProps) {
   const isLesson = section === 'learn'
   const finished = isLesson ? progress.lessonsCompleted : progress.puzzlesCompleted
   const [difficulty, setDifficulty] = useState<Difficulty | 'all'>('all')
@@ -294,19 +294,15 @@ function LearningContent({ section, lang, initialId, onProgressChange }: Learnin
   )
   const current = items.find((item) => item.id === selectedId) ?? items[0]!
   const [attempt, setAttempt] = useState(0)
+  const activityHeading = useRef<HTMLHeadingElement>(null)
   const index = items.findIndex((item) => item.id === current.id)
   const total = isLesson ? lessons.length : puzzles.length
   useEffect(() => {
-    const refresh = (event: StorageEvent) => {
-      if (event.key === learningStorageKey || event.key === null) setProgress(readLearningProgress())
-    }
-    window.addEventListener('storage', refresh)
-    return () => window.removeEventListener('storage', refresh)
-  }, [])
+    if (attempt) activityHeading.current?.focus()
+  }, [attempt])
   function answer(correct: boolean) {
     const next = recordStudyAnswer(section, current.id, correct)
-    setProgress(next)
-    onProgressChange?.(next)
+    onProgressChange(next)
   }
   function goNext() {
     setSelectedId(items[(index + 1) % items.length]!.id)
@@ -315,11 +311,28 @@ function LearningContent({ section, lang, initialId, onProgressChange }: Learnin
   const listLabel = (isLesson ? ui.curriculum : ui.collection)[lang]
   const completedPercent = (100 * finished.length) / total
   const contentId = useId()
+  const levelFilter = !isLesson && (
+    <label className="study-filter">
+      <span>{ui.filter[lang]}</span>
+      <select
+        aria-label={ui.filter[lang]}
+        value={difficulty}
+        onChange={(event) => setDifficulty(event.target.value as Difficulty | 'all')}
+      >
+        <option value="all">{ui.all[lang]}</option>
+        {(['beginner', 'intermediate', 'advanced'] as const).map((level) => (
+          <option value={level} key={level}>
+            {difficultyNames[level][lang]}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
   return (
     <section className="study" lang={lang}>
-      <header className="study-header">
+      <header className="study-header page-intro">
         <div>
-          <h1>{(isLesson ? ui.academy : ui.puzzles)[lang]}</h1>
+          <h1 className="page-title">{(isLesson ? ui.academy : ui.puzzles)[lang]}</h1>
           <p>{(isLesson ? ui.academyIntro : ui.puzzleIntro)[lang]}</p>
         </div>
         <div className="study-progress">
@@ -333,6 +346,24 @@ function LearningContent({ section, lang, initialId, onProgressChange }: Learnin
         </div>
       </header>
       <div className="study-layout">
+        <nav className="study-compact-index" aria-label={listLabel}>
+          {levelFilter}
+          <label className="study-mobile-picker">
+            {(isLesson ? ui.chooseLesson : ui.choosePuzzle)[lang]}
+            <select
+              aria-label={(isLesson ? ui.chooseLesson : ui.choosePuzzle)[lang]}
+              aria-controls={contentId}
+              value={current.id}
+              onChange={(event) => setSelectedId(event.target.value)}
+            >
+              {items.map((item) => (
+                <option value={item.id} key={item.id}>
+                  {item.title[lang]}
+                </option>
+              ))}
+            </select>
+          </label>
+        </nav>
         <article className="study-activity" id={contentId}>
           <div className="study-meta">
             {isLesson ? <BookOpen size={16} /> : <Layers3 size={16} />}
@@ -349,7 +380,9 @@ function LearningContent({ section, lang, initialId, onProgressChange }: Learnin
                 : difficultyNames[current.puzzle.difficulty][lang]}
             </span>
           </div>
-          <h2>{current.title[lang]}</h2>
+          <h2 ref={activityHeading} tabIndex={-1}>
+            {current.title[lang]}
+          </h2>
           {current.lesson && <p className="study-intro">{current.lesson.explanation[lang]}</p>}
           {!current.lesson && (
             <p className="study-rule-label">
@@ -370,32 +403,7 @@ function LearningContent({ section, lang, initialId, onProgressChange }: Learnin
         </article>
         <nav className="study-index" aria-label={listLabel}>
           <h2>{listLabel}</h2>
-          {!isLesson && (
-            <label className="study-filter">
-              <span>{ui.filter[lang]}</span>
-              <select
-                value={difficulty}
-                onChange={(event) => setDifficulty(event.target.value as Difficulty | 'all')}
-              >
-                <option value="all">{ui.all[lang]}</option>
-                {(['beginner', 'intermediate', 'advanced'] as const).map((level) => (
-                  <option value={level} key={level}>
-                    {difficultyNames[level][lang]}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-          <label className="study-mobile-picker">
-            {(isLesson ? ui.chooseLesson : ui.choosePuzzle)[lang]}
-            <select value={current.id} onChange={(event) => setSelectedId(event.target.value)}>
-              {items.map((item) => (
-                <option value={item.id} key={item.id}>
-                  {item.title[lang]}
-                </option>
-              ))}
-            </select>
-          </label>
+          {levelFilter}
           <ol className="study-list">
             {items.map((item, num) => (
               <li key={item.id}>

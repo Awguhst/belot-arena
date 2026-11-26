@@ -28,8 +28,8 @@ import { ow } from './words'
 import {
   ErrorNotice,
   Monogram,
+  NicknameEntry,
   NicknameDialog,
-  onlineError,
   PasswordDialog,
   Status,
   useRequest,
@@ -97,14 +97,32 @@ interface Props {
   rooms: RoomListing[]
   presence: Presence | null
   connected: boolean
+  retrying: boolean
+  restoringName: boolean
+  view: ReturnType<typeof useDirectoryView>
   send: Send
   offline: () => void
 }
-export function Directory({ lang, guest, rooms, presence, connected, send, offline }: Props) {
+export function useDirectoryView() {
   const [query, setQuery] = useState(''),
     [sort, setSort] = useState<RoomSort>('recommended'),
     [filters, setFilters] = useState(clearFilters),
     [showFilters, toggleFilters] = useState(false)
+  return { query, setQuery, sort, setSort, filters, setFilters, showFilters, toggleFilters }
+}
+export function Directory({
+  lang,
+  guest,
+  rooms,
+  presence,
+  connected,
+  retrying,
+  restoringName,
+  view,
+  send,
+  offline,
+}: Props) {
+  const { query, setQuery, sort, setSort, filters, setFilters, showFilters, toggleFilters } = view
   const [host, setHost] = useState(false),
     [editName, setEditName] = useState(false),
     [joinRoom, setJoinRoom] = useState<RoomListing | null>(null)
@@ -116,7 +134,7 @@ export function Directory({ lang, guest, rooms, presence, connected, send, offli
   const activeFilters = (Object.keys(clearFilters) as (keyof DirectoryFilters)[]).filter(
     (k) => filters[k] !== clearFilters[k],
   ).length
-  const usable = connected && !!guest.name
+  const usable = connected && !!presence && !!guest.name
   function filter<K extends keyof DirectoryFilters>(key: K, value: DirectoryFilters[K]) {
     setFilters((s) => ({ ...s, [key]: value }))
   }
@@ -130,40 +148,11 @@ export function Directory({ lang, guest, rooms, presence, connected, send, offli
     setFilters(clearFilters)
   }
   return (
-    <main className="net-page">
-      <header className="net-mast">
-        <div className="net-mast-inner">
-          <button type="button" className="net-brand" onClick={offline} aria-label="Belot Club">
-            <img src="/spade.svg" alt="" />
-            <span>
-              Belot <em>Club</em>
-            </span>
-          </button>
-          <div className="net-mast-actions">
-            <button className="net-offline" onClick={offline}>
-              <ArrowLeft size={15} />
-              {ow(lang, 'offline')}
-            </button>
-            {guest.name && (
-              <button
-                className="net-identity"
-                disabled={!connected}
-                onClick={() => setEditName(true)}
-                aria-label={ow(lang, 'editName')}
-                title={ow(lang, 'editName')}
-              >
-                <Monogram name={guest.name} />
-                <strong>{guest.name}</strong>
-                <Pencil size={13} />
-              </button>
-            )}
-          </div>
-        </div>
-      </header>
+    <section className="net-page" aria-labelledby="public-rooms-heading">
       <div className="net-main">
         <header className="net-banner">
           <div className="net-page-heading">
-            <h1>{ow(lang, 'publicRooms')}</h1>
+            <h1 id="public-rooms-heading">{ow(lang, 'publicRooms')}</h1>
             <button
               className="btn net-host"
               disabled={!usable}
@@ -176,26 +165,48 @@ export function Directory({ lang, guest, rooms, presence, connected, send, offli
               {ow(lang, 'hostRoom')}
             </button>
           </div>
-          <dl className="net-presence" aria-live="off">
-            {(
-              [
-                { label: 'connected', Icon: Users, value: presence?.connected },
-                {
-                  label: 'available',
-                  Icon: DoorOpen,
-                  value: presence ? rooms.filter(canJoin).length : undefined,
-                },
-                { label: 'active', Icon: Gamepad2, value: presence?.matches },
-              ] as const
-            ).map(({ label, Icon, value }) => (
-              <div key={label}>
-                <Icon size={17} />
-                <dd>{connected && value !== undefined ? value : '—'}</dd>
-                <dt>{ow(lang, label)}</dt>
-              </div>
-            ))}
-          </dl>
+          <div className="net-banner-foot">
+            <dl className="net-presence" aria-live="off">
+              {(
+                [
+                  { label: 'connected', Icon: Users, value: presence?.connected },
+                  {
+                    label: 'available',
+                    Icon: DoorOpen,
+                    value: presence ? rooms.filter(canJoin).length : undefined,
+                  },
+                  { label: 'active', Icon: Gamepad2, value: presence?.matches },
+                ] as const
+              ).map(({ label, Icon, value }) => (
+                <div key={label}>
+                  <Icon size={17} />
+                  <dd>{connected && value !== undefined ? value : '—'}</dd>
+                  <dt>{ow(lang, label)}</dt>
+                </div>
+              ))}
+            </dl>
+            <div className="net-account-actions">
+              <button className="net-offline" onClick={offline}>
+                <ArrowLeft size={15} />
+                {ow(lang, 'offline')}
+              </button>
+              {guest.name && (
+                <button
+                  className="net-identity"
+                  disabled={!connected}
+                  onClick={() => setEditName(true)}
+                  aria-label={ow(lang, 'editName')}
+                  title={ow(lang, 'editName')}
+                >
+                  <Monogram name={guest.name} />
+                  <strong>{guest.name}</strong>
+                  <Pencil size={13} />
+                </button>
+              )}
+            </div>
+          </div>
         </header>
+        {connected && !guest.name && !restoringName && <NicknameEntry lang={lang} send={send} />}
         <section aria-label={ow(lang, 'publicList')} className="net-browser">
           <div className="net-tools">
             <label className="net-search">
@@ -333,8 +344,8 @@ export function Directory({ lang, guest, rooms, presence, connected, send, offli
                           <Suit size={21} />
                         </span>
                         <div>
-                          <strong>
-                            {room.title}
+                          <strong title={room.title}>
+                            <span className="net-room-label">{room.title}</span>
                             {room.locked && (
                               <LockKeyhole
                                 className="net-lock"
@@ -344,7 +355,7 @@ export function Directory({ lang, guest, rooms, presence, connected, send, offli
                               />
                             )}
                           </strong>
-                          <small>
+                          <small title={room.hostName}>
                             {ow(lang, 'host')} · {room.hostName}
                           </small>
                         </div>
@@ -400,7 +411,7 @@ export function Directory({ lang, guest, rooms, presence, connected, send, offli
           {(!connected || !presence) && (
             <div className="net-empty" role="status">
               <Layers />
-              {ow(lang, 'connecting')}
+              {ow(lang, retrying ? 'retrying' : 'connecting')}
             </div>
           )}
           {connected && presence && !results.length && (
@@ -420,14 +431,13 @@ export function Directory({ lang, guest, rooms, presence, connected, send, offli
           )}
         </section>
       </div>
-      {connected && (!guest.name || editName) && (
+      {editName && guest.name && (
         <NicknameDialog
           lang={lang}
           guest={guest}
           send={send}
           connected={connected}
-          close={guest.name ? () => setEditName(false) : offline}
-          saved={() => setEditName(false)}
+          close={() => setEditName(false)}
         />
       )}
       {host && (
@@ -450,12 +460,13 @@ export function Directory({ lang, guest, rooms, presence, connected, send, offli
             try {
               await send({ type: 'room:join', roomId: joinRoom.id, password })
             } catch (e) {
-              request.setError(onlineError(lang, e))
+              if (e instanceof Error && e.message === 'wrong_password') throw e
+              request.setError(e)
               setJoinRoom(null)
             }
           }}
         />
       )}
-    </main>
+    </section>
   )
 }

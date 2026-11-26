@@ -19,7 +19,7 @@ import type { Lang } from './store'
 import type { MatchRecord, ReviewedHand } from './session'
 import { lessons } from './learning/lessons'
 import { puzzles } from './learning/puzzles'
-import { readLearningProgress } from './learning/progress'
+import type { LearningProgress } from './learning/progress'
 import './Statistics.css'
 
 type Filter = 'all' | 'assisted' | 'unassisted'
@@ -45,6 +45,11 @@ const copy = {
     'Завърши ръка, за да проследиш резултатите си по дати.',
     'Finish a hand to start your score history.',
   ],
+  noFilteredHands: [
+    'Няма завършени раздавания за избрания филтър.',
+    'No completed hands match this filter.',
+  ],
+  showAll: ['Покажи всички резултати', 'Show all results'],
   handStats: ['Резултати от ръцете', 'Hand results'],
   teamCaps: ['Капо за нашия отбор', 'Team capots'],
   multiplier: ['Удвоени договори', 'Doubled contracts'],
@@ -76,6 +81,7 @@ export interface StatisticsProps {
   lang: Lang
   hands: ReviewedHand[]
   records: MatchRecord[]
+  progress: LearningProgress
 }
 
 export function summarizeStatistics(hands: ReviewedHand[], records: MatchRecord[], filter: Filter) {
@@ -159,11 +165,10 @@ export function summarizeStatistics(hands: ReviewedHand[], records: MatchRecord[
   }
 }
 
-export function Statistics({ lang, hands, records }: StatisticsProps) {
+export function Statistics({ lang, hands, records, progress: learning }: StatisticsProps) {
   const [filter, setFilter] = useState<Filter>('all')
   const [allDays, setAllDays] = useState(false)
   const values = useMemo(() => summarizeStatistics(hands, records, filter), [hands, records, filter])
-  const learning = readLearningProgress()
   const label = (key: CopyKey) => copy[key][lang === 'bg' ? 0 : 1]
   const percent = (a: number, total: number) =>
     total
@@ -182,8 +187,8 @@ export function Statistics({ lang, hands, records }: StatisticsProps) {
   ]
   return (
     <section className="club-stats">
-      <header className="stat-heading">
-        <h1>{t(lang, 'stats')}</h1>
+      <header className="page-intro">
+        <h1 className="page-title">{t(lang, 'stats')}</h1>
         <p>{t(lang, 'statsIntro')}</p>
       </header>
       <div className="stat-controls" role="group" aria-label={label('resultFilter')}>
@@ -368,6 +373,13 @@ export function Statistics({ lang, hands, records }: StatisticsProps) {
                 </button>
               )}
             </>
+          ) : filter !== 'all' && hands.length ? (
+            <div className="stat-empty">
+              <p>{label('noFilteredHands')}</p>
+              <button type="button" className="text-btn" onClick={() => setFilter('all')}>
+                {label('showAll')}
+              </button>
+            </div>
           ) : (
             <p className="stat-empty">{label('empty')}</p>
           )}

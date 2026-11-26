@@ -204,12 +204,7 @@ export function OnlineTable({ room, game, guest, connected, send, onReturn, onLe
         returnToRoom,
       }}
     >
-      <main
-        className="match-viewport online-table"
-        id="content"
-        data-room-id={room.id}
-        data-own-seat={game.view.seat}
-      >
+      <div className="online-table" data-room-id={room.id} data-own-seat={game.view.seat}>
         <Table
           key={projection.matchId}
           view={view}
@@ -243,7 +238,7 @@ export function OnlineTable({ room, game, guest, connected, send, onReturn, onLe
             </div>
           </Modal>
         )}
-      </main>
+      </div>
     </TableRoomContext.Provider>
   )
 }

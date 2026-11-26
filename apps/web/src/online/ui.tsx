@@ -39,6 +39,14 @@ const errors: Record<string, [string, string]> = {
     'Връзката прекъсна. Изчакай повторно свързване.',
     'Connection interrupted. Wait for the lobby to reconnect.',
   ],
+  timeout: [
+    'Отговорът се забави. Провери състоянието на стаята и опитай пак.',
+    'The server took too long to respond. Check the room and try again.',
+  ],
+  seat_expired: [
+    'Мястото ти вече не е запазено. Можеш да избереш стая от списъка.',
+    'Your seat reservation ended. You can choose a room from the directory.',
+  ],
 }
 export function onlineError(lang: Lang, value: unknown) {
   const code = value instanceof Error ? value.message : String(value)
@@ -56,7 +64,10 @@ export function ErrorNotice({ text }: { text: string }) {
 export function useRequest(lang: Lang) {
   const lock = useRef(false)
   const [busy, setBusy] = useState(false),
-    [error, setError] = useState('')
+    [code, setCode] = useState('')
+  function setError(error: unknown) {
+    setCode(error instanceof Error ? error.message : String(error))
+  }
   async function run(action: () => Promise<void>, success?: () => void) {
     if (lock.current) return
     lock.current = true
@@ -66,13 +77,13 @@ export function useRequest(lang: Lang) {
       await action()
       success?.()
     } catch (e) {
-      setError(onlineError(lang, e))
+      setError(e)
     } finally {
       lock.current = false
       setBusy(false)
     }
   }
-  return { run, busy, error, setError }
+  return { run, busy, error: code ? onlineError(lang, code) : '', setError }
 }
 const statuses: Record<RoomStatus, Word> = {
   waiting: 'waiting',
@@ -98,55 +109,85 @@ export function Monogram({ name, host = false }: { name: string; host?: boolean 
     </span>
   )
 }
-export function NicknameDialog({
-  guest,
+function NicknameForm({
+  name = '',
   lang,
   send,
   close,
-  saved = close,
-  connected,
+  connected = true,
 }: {
-  guest: Guest
+  name?: string
   lang: Lang
   send: Send
-  close: () => void
-  saved?: () => void
-  connected: boolean
+  close?: () => void
+  connected?: boolean
 }) {
   const request = useRequest(lang)
   function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const name = String(new FormData(e.currentTarget).get('nickname') ?? '').trim()
-    if (name) void request.run(() => send({ type: 'guest:name', name }), saved)
+    if (name) void request.run(() => send({ type: 'guest:name', name }), close)
   }
+  const submitButton = (
+    <button className="btn" disabled={request.busy || !connected}>
+      <Check size={15} />
+      {ow(lang, close ? 'save' : 'enterLobby')}
+    </button>
+  )
   return (
-    <Modal label={ow(lang, guest.name ? 'editName' : 'nameTitle')} close={close}>
-      <form onSubmit={submit} className="net-form">
-        <p className="net-form-note">{ow(lang, 'nameHelp')}</p>
-        <label className="net-field">
-          <span>{ow(lang, 'nickname')}</span>
-          <input
-            name="nickname"
-            placeholder={ow(lang, 'namePlaceholder')}
-            defaultValue={guest.name}
-            maxLength={24}
-            required
-            pattern=".*\S.*"
-            autoFocus
-            autoComplete="nickname"
-          />
-        </label>
-        <ErrorNotice text={request.error} />
+    <form onSubmit={submit} className={close ? 'net-form' : 'net-name-form'}>
+      {close && <p className="net-form-note">{ow(lang, 'nameHelp')}</p>}
+      <label className="net-field">
+        <span>{ow(lang, 'nickname')}</span>
+        <input
+          name="nickname"
+          placeholder={ow(lang, 'namePlaceholder')}
+          defaultValue={name}
+          maxLength={24}
+          required
+          pattern=".*\S.*"
+          autoFocus={!!close}
+          autoComplete="nickname"
+        />
+      </label>
+      {close ? (
         <div className="modal-actions">
           <button type="button" className="btn secondary" onClick={close}>
             {ow(lang, 'cancel')}
           </button>
-          <button className="btn" disabled={request.busy || !connected}>
-            <Check size={15} />
-            {ow(lang, guest.name ? 'save' : 'enterLobby')}
-          </button>
+          {submitButton}
         </div>
-      </form>
+      ) : (
+        submitButton
+      )}
+      <ErrorNotice text={request.error} />
+    </form>
+  )
+}
+export function NicknameEntry({ lang, send }: { lang: Lang; send: Send }) {
+  return (
+    <section className="net-nickname-entry" aria-labelledby="net-nickname-title">
+      <h2 id="net-nickname-title">{ow(lang, 'nameTitle')}</h2>
+      <NicknameForm lang={lang} send={send} />
+    </section>
+  )
+}
+export function NicknameDialog({
+  guest,
+  lang,
+  send,
+  connected,
+  close,
+}: {
+  guest: Guest
+  lang: Lang
+  send: Send
+  connected: boolean
+  close: () => void
+}) {
+  return (
+    <Modal label={ow(lang, 'editName')} close={close}>
+      <NicknameForm name={guest.name} lang={lang} send={send} connected={connected} close={close} />
     </Modal>
   )
 }
@@ -173,7 +214,7 @@ export function PasswordDialog({
     e.preventDefault()
     const password = remove ? '' : String(new FormData(e.currentTarget).get('password') ?? '')
     if (new TextEncoder().encode(password).length > 128) {
-      request.setError(onlineError(lang, 'invalid'))
+      request.setError('invalid')
       return
     }
     void request.run(() => submit(password), close)
